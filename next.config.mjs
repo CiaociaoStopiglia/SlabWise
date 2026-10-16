@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        // Libera as imagens das cartas da TCGdex no <Image> do Next.
+        // O navegador baixa as fotos das cartas direto da TCGdex,
+        // sem passar pelo servidor do Next (que estava dando timeout).
+        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',
