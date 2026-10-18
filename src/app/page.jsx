@@ -124,7 +124,7 @@ export default async function Home() {
                             </p>
 
                             <form
-                                action="/busca"
+                                action="/precos"
                                 method="get"
                                 className={styles.search}
                                 role="search">
@@ -149,7 +149,7 @@ export default async function Home() {
                                 <ul>
                                     {populares.map((nome) => (
                                         <li key={nome}>
-                                            <Link href={`/busca?q=${encodeURIComponent(nome)}`}>
+                                            <Link href={`/precos?q=${encodeURIComponent(nome)}`}>
                                                 {nome}
                                             </Link>
                                         </li>

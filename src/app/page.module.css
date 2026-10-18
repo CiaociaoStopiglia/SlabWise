@@ -1012,3 +1012,95 @@ button.navCta {
     transition: none;
   }
 }
+/* ---------- CENTRALIZAÇÃO ---------- */
+/* Tudo centralizado. Quem herda este arquivo (busca, coleção, graduar...) herda o texto centralizado. */
+.page {
+  text-align: center;
+}
+
+.navLinks {
+  margin: 0 auto;
+}
+
+.heroInner {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 64px;
+}
+
+.heroText {
+  max-width: 46rem;
+}
+
+.lead,
+.sectionLead,
+.search,
+.sourceNote {
+  margin-inline: auto;
+}
+
+.sectionLead,
+.sourceNote {
+  max-width: 44rem;
+}
+
+.popular,
+.popular ul,
+.carouselControls {
+  justify-content: center;
+}
+
+/* O slab e o recibo são "objetos": o texto dentro deles continua alinhado como num certificado */
+.slabLabel,
+.receipt,
+.priceTag {
+  text-align: left;
+}
+
+.gradeGrid {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 48px;
+}
+
+.gradeText p:not(.eyebrowDark) {
+  margin-inline: auto;
+}
+
+.receipt {
+  width: min(100%, 440px);
+}
+
+.plans {
+  margin-inline: auto;
+}
+
+.plan ul {
+  text-align: left;
+}
+
+.footerInner {
+  justify-items: center;
+}
+
+.footer p {
+  margin-inline: auto;
+}
+
+/* Grade de cartas: o conjunto fica no meio, mas a última linha começa na esquerda, alinhada com a primeira coluna */
+.cardStrip {
+  grid-template-columns: repeat(auto-fill, 190px);
+  justify-content: center;
+}
+
+.cardTile {
+  align-items: center;
+}
+
+.tilePrice {
+  align-self: center;
+}
+
+.carouselTrack {
+  justify-content: center;
+}

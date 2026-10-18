@@ -208,9 +208,10 @@ export function interpretarBusca(texto = "") {
 
 /**
  * Busca cartas pelo texto digitado.
+ * "limite" é quantas cartas trazer (o resto aparece com o botão "Ver mais").
  * Retorna { cartas, total, erro }. erro = true quando a TCGdex não respondeu.
  */
-export async function pesquisarCartas(texto) {
+export async function pesquisarCartas(texto, limite = LIMITE_BUSCA) {
   const { nome, numero } = interpretarBusca(texto);
   if (!nome && !numero) return { cartas: [], total: 0, erro: false };
 
@@ -222,9 +223,13 @@ export async function pesquisarCartas(texto) {
   if (!Array.isArray(resumos)) return { cartas: [], total: 0, erro: true };
 
   const lista = resumos.filter((r) => r.image);
-  const pagina = lista.slice(0, LIMITE_BUSCA);
+  const pagina = lista.slice(0, limite);
   const cotacao = await cotacaoDoDia();
-  const detalhes = await Promise.all(pagina.map((r) => buscarCartaPorId(r.id, cotacao)));
+  // Em lotes de 20, pra não bombardear a API quando a pessoa pede todas as cartas.
+  const detalhes = [];
+  for (let i = 0; i < pagina.length; i += 20) {
+    detalhes.push(...(await Promise.all(pagina.slice(i, i + 20).map((r) => buscarCartaPorId(r.id, cotacao)))));
+  }
 
   // Se o detalhe de uma carta falhar, mostra pelo menos a foto e o nome.
   const cartas = pagina.map(

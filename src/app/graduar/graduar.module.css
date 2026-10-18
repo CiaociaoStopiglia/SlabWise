@@ -646,3 +646,61 @@ fieldset.step legend + * {
     width: 88px;
   }
 }
+/* ---------- Centralização ---------- */
+.bandInner {
+  text-align: center;
+}
+
+.lead {
+  margin-inline: auto;
+}
+
+.bodyInner {
+  justify-items: stretch;
+}
+
+.step legend,
+.legend,
+.stepLead,
+.muted {
+  justify-content: center;
+  text-align: center;
+}
+
+.picked {
+  flex-direction: column;
+  text-align: center;
+}
+
+.pickedInfo {
+  align-items: center;
+}
+
+.pickSearch {
+  margin-inline: auto;
+}
+
+.pickList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pickList > li {
+  flex: 0 1 260px;
+}
+
+.pickItem {
+  text-align: left;
+}
+
+/* Formulários, tabelas e o resultado continuam alinhados à esquerda: números e campos leem melhor assim */
+.field,
+.checkItem,
+.table,
+.costs,
+.resultBody,
+.verdict,
+.tips {
+  text-align: left;
+}

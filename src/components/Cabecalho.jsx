@@ -8,6 +8,7 @@ import base from "../app/page.module.css";
 
 const LINKS = [
   { href: "/precos", rotulo: "Preços", id: "precos" },
+  { href: "/planos", rotulo: "Planos", id: "planos" },
   { href: "/graduar", rotulo: "Vale graduar?", id: "graduar" },
   { href: "/colecao", rotulo: "Minha coleção", id: "colecao" },
 ];

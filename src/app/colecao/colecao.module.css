@@ -1,0 +1,407 @@
+/* Minha coleção. Cores, fontes, tiles e botões vêm do page.module.css da home. */
+
+.band {
+  background: var(--slab-yellow);
+  border-bottom: var(--border);
+}
+
+.bandInner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 44px var(--gutter-r) 40px var(--gutter);
+  display: grid;
+  gap: 20px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(1.9rem, 4.4vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Números da coleção, como a etiqueta de um slab */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.stats div {
+  padding: 14px 16px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.stats dt {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.stats dd {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  line-height: 1.2;
+}
+
+.alta {
+  color: var(--up);
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.baixa {
+  color: var(--down);
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.stats .alta,
+.stats .baixa {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 800;
+}
+
+/* Avisos */
+.avisoWrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 20px var(--gutter-r) 0 var(--gutter);
+}
+
+.avisoOk,
+.avisoErro {
+  margin: 0;
+  padding: 12px 16px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-weight: 600;
+}
+
+.avisoOk {
+  border-color: var(--up);
+}
+
+.avisoErro {
+  border-color: var(--down);
+}
+
+/* Seções */
+.section {
+  border-bottom: var(--border);
+}
+
+.sectionLista {
+  border-bottom: 0;
+}
+
+.inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 40px var(--gutter-r) 48px var(--gutter);
+}
+
+.h2 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.searchWide {
+  max-width: 720px;
+  margin-bottom: 24px;
+}
+
+.count {
+  margin: 0 0 16px;
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.muted {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+p.muted {
+  font-size: 0.95rem;
+}
+
+/* Tiles */
+.tile:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.semFoto {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 245 / 337;
+  margin-bottom: 8px;
+  border: 1.5px dashed var(--ink-soft);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.tag {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.valores {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+/* Quantidade e ações */
+.qtd {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--ink-soft);
+}
+
+.qtd label,
+.addForm label {
+  display: grid;
+  gap: 2px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.qtd input {
+  width: 64px;
+}
+
+.qtd button {
+  padding: 6px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qtd button:hover {
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.acoes a {
+  text-decoration: none;
+}
+
+.acoes a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.remover {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--down);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.remover:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Formulário de adicionar */
+.add {
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.add summary {
+  padding: 8px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  list-style: none;
+}
+
+.add summary::-webkit-details-marker {
+  display: none;
+}
+
+.add summary:hover,
+.add[open] summary {
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+.addForm {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.addForm button {
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.qtd input,
+.addForm input,
+.addForm select {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.qtd input {
+  width: 64px;
+}
+
+/* Estado vazio */
+.state {
+  max-width: 560px;
+  padding: 32px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.state h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+
+.state p {
+  margin: 0 0 20px;
+  color: var(--ink-soft);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips a {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.chips a:hover {
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+@media (max-width: 640px) {
+  .bandInner {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  .state {
+    padding: 24px;
+  }
+}
+
+/* ---------- Centralização ---------- */
+.bandInner {
+  justify-items: center;
+  text-align: center;
+}
+
+.stats {
+  width: 100%;
+}
+
+.searchWide,
+.state {
+  margin-inline: auto;
+}
+
+.chips,
+.valores,
+.acoes,
+.qtd {
+  align-items: center;
+  justify-content: center;
+}
+
+.tag {
+  align-self: center;
+}
+
+.addForm {
+  text-align: left;
+}
+
+.avisoOk,
+.avisoErro {
+  text-align: center;
+}

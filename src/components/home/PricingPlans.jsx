@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { Check, Minus, Sparkles } from 'lucide-react';
-import styles from '../../app/precos/precos.module.css';
+import styles from '../../app/planos/planos.module.css';
 
 const PRO_MENSAL = 9.9;
 const PRO_ANUAL = 99;

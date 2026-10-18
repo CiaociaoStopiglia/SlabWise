@@ -253,3 +253,23 @@
     transition: none;
   }
 }
+
+/* ---------- Centralização ---------- */
+.inner {
+  grid-template-columns: minmax(0, 520px);
+  justify-content: center;
+  text-align: center;
+}
+
+.perks li {
+  padding-left: 0;
+}
+
+.perks li::before {
+  display: none;
+}
+
+.form,
+.field {
+  text-align: left;
+}

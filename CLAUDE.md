@@ -19,9 +19,10 @@ Contexto do projeto para o Claude. Visão geral e histórico completo estão no 
 ## Estrutura
 
 - `src/app/page.jsx`: home (landing)
-- `src/app/busca/`: busca de cartas (`/busca?q=...`), ordenação por preço/nome
+- `src/app/precos/`: preço das cartas em real (`/precos?q=...`), ordenação por preço/nome (`/busca` só redireciona pra cá)
 - `src/app/graduar/`: simulador "Vale graduar?" (`page.jsx` servidor, `Calculadora.jsx` cliente, `psa.js` com níveis/preços/checklist/chances)
-- `src/app/precos/`: planos Grátis e Pro
+- `src/app/planos/`: planos Grátis e Pro
+- `src/app/colecao/`: Minha coleção (exige login; busca, adicionar, quantidade, remover; Server Actions em `actions.js`, listas de estado/graduação em `opcoes.js`)
 - `src/app/entrar/`: login/cadastro (`actions.js` são Server Actions)
 - `src/components/Cabecalho.jsx`: topo comum a todas as páginas (mostra Entrar ou nome + Sair)
 - `src/components/home/`: componentes de animação/UI (Reveal, CountUp, TiltStage, CardCarousel, PricingPlans, HeroEntrance, SmoothScroll)
@@ -58,7 +59,6 @@ O banco é criado rodando `src/db/schema.sql` no pgAdmin (Postgres 15+, usa `cit
 
 ## Pendências conhecidas
 
-- A rota `/colecao` aparece no cabeçalho, mas **ainda não existe** (tabela `colecao` já está no banco).
 - Salvar simulações (`simulacoes`) e recuperação de senha (`recuperacoes_senha`) têm tabela, mas não têm tela/ação.
 - Pagamento do plano Pro não está implementado (`plano`/`pro_ate` só existem no banco).
 - `package.json` ainda tem autores, descrição e homepage do template Codeverse.

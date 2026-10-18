@@ -9,9 +9,10 @@ O problema que resolve: os preços das cartas estão em dólar ou euro, e quem c
 | Página | Rota | O que tem |
 | --- | --- | --- |
 | Home | `/` | Apresentação, cartas em destaque com preço em real, carrossel, planos |
-| Busca | `/busca?q=charizard` | Pesquisa por nome, preço em R$, variação em 30 dias, ordenação por maior/menor preço ou nome |
+| Preços | `/precos?q=charizard` | Pesquisa por nome, preço em R$, variação em 30 dias, ordenação por maior/menor preço ou nome |
 | Vale graduar? | `/graduar` | Simulador: escolha a carta, marque o estado (centralização, cantos, bordas, superfície) e veja custo total, chance de cada nota (PSA 10/9/8/7-) e o veredito |
-| Planos e preços | `/precos` | Grátis x Pro, alternância mensal/anual, tabela comparativa |
+| Planos | `/planos` | Grátis x Pro, alternância mensal/anual, tabela comparativa |
+| Minha coleção | `/colecao` | Só logado: valor total em R$, resultado (lucro/prejuízo), busca para adicionar carta (quantidade, estado, graduação, quanto pagou), editar quantidade e remover |
 | Entrar | `/entrar` | Cadastro e login |
 
 ### Planos
@@ -24,12 +25,13 @@ O problema que resolve: os preços das cartas estão em dólar ou euro, e quem c
 1. **Base**: projeto Next.js 16 (App Router) + React 19 a partir de um template didático do Codeverse.
 2. **Home**: landing com animações (GSAP, Motion, Lenis, Embla), contador animado, carrossel e card 3D com inclinação.
 3. **Dados de cartas** (`src/lib/tcgdex.js`): integração com a TCGdex (dados, imagens, preços TCGplayer em USD e Cardmarket em EUR) e conversão para reais com a cotação do dia. Tem cache, timeout de 6 s, câmbio com três camadas de fallback (AwesomeAPI, ExchangeRate-API, valor reserva) e correção para redes brasileiras com IPv6 quebrado.
-4. **Busca**: página de busca com tratamento de erro, sugestões e ordenação.
+4. **Preços das cartas** (`/precos`): página de busca com tratamento de erro, sugestões e ordenação.
 5. **Simulador de graduação**: níveis de serviço da PSA (de Value Bulk a Walk Through), nível automático pelo valor da carta, frete em grupo ou sozinho, imposto editável, checklist de estado que vira chance de cada nota, e estimativa de data de volta. Regras em `src/app/graduar/psa.js`.
 6. **Página de preços**: planos com alternância mensal/anual, garantias e comparativo.
 7. **Banco de dados** (PostgreSQL, `src/db/schema.sql`): tabelas `usuarios`, `sessoes`, `recuperacoes_senha`, `colecao` e `simulacoes`; trigger que limita o plano Grátis a 100 cartas; usuário de banco sem privilégio de superusuário para o site.
 8. **Contas e login** (`src/lib/auth.js`, `src/app/entrar/`): cadastro e login com senha em bcrypt, sessão por cookie `httpOnly` (no banco só vai o hash do token), mensagem de erro igual para e-mail inexistente e senha errada, redirecionamento seguro após entrar.
-9. **Cabeçalho único** para todas as páginas, que mostra "Entrar" ou "Olá, Nome" com selo PRO e botão Sair.
+9. **Minha coleção** (`src/app/colecao/`): soma o valor atual das cartas em reais, calcula resultado quando você informa quanto pagou, soma a quantidade se a mesma carta (mesmo estado e graduação) for adicionada de novo, e respeita o limite de 100 cartas do plano Grátis.
+10. **Cabeçalho único** para todas as páginas, que mostra "Entrar" ou "Olá, Nome" com selo PRO e botão Sair.
 
 ## Stack
 
@@ -80,7 +82,6 @@ src/
 
 ## Próximos passos
 
-- Criar a página **Minha coleção** (`/colecao`): o link já está no cabeçalho e a tabela já existe.
 - Salvar simulações e recuperar senha (tabelas prontas, falta a interface).
 - Cobrança do plano Pro e alertas de preço.
 - Trocar descrição, autores e homepage do template Codeverse em `package.json`, e remover `Nome-do-componente`.
