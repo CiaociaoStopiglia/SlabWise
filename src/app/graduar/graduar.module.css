@@ -1,0 +1,648 @@
+/* Simulador "Vale graduar?". Cores e fontes vêm do page.module.css da home (.page). */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Topo ---------- */
+.band {
+  background: var(--slab-yellow);
+  border-bottom: var(--border);
+}
+
+.bandInner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 48px var(--gutter-r) 44px var(--gutter);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 40rem;
+  margin: 18px 0 0;
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- Corpo ---------- */
+.body {
+  border-bottom: var(--border);
+}
+
+.bodyInner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 40px var(--gutter-r) 72px var(--gutter);
+  display: grid;
+  gap: 24px;
+}
+
+.step {
+  min-width: 0;
+  margin: 0;
+  padding: 24px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.step legend,
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 0;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+/* fieldset: a legend fica dentro da borda */
+fieldset.step legend {
+  float: left;
+  width: 100%;
+}
+
+fieldset.step legend + * {
+  clear: both;
+}
+
+.stepNum {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--slab-yellow);
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stepLead {
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+}
+
+.muted {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+/* Passo 1: carta escolhida */
+.picked {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.pickedImg {
+  width: 110px;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: 6px;
+}
+
+.pickedInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pickedInfo strong {
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.pickedInfo > span:nth-child(2) {
+  color: var(--ink-soft);
+}
+
+.change {
+  margin-top: 6px;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.pickSearch {
+  max-width: 640px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.warnBox {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border: 1.5px solid var(--down);
+  border-radius: 8px;
+  color: var(--ink);
+}
+
+.pickList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pickItem {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  height: 100%;
+  padding: 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.pickItem:hover {
+  background: var(--slab-yellow);
+}
+
+.pickItem img {
+  width: 52px;
+  height: auto;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.pickItem > span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pickItem strong {
+  font-size: 0.95rem;
+}
+
+.pickItem small {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.pickItem .pickPrice {
+  font-family: var(--font-data);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------- Calculadora ---------- */
+.calc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  gap: 24px;
+  align-items: start;
+}
+
+.steps {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.exampleNote {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--slab-yellow);
+  border: 1.5px solid var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+.grid2 .field {
+  margin-bottom: 0;
+}
+
+.field label,
+.fieldLabel {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.fieldHelp {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.money {
+  display: flex;
+  align-items: center;
+  border: var(--border);
+  border-radius: 10px;
+  background: var(--acrylic);
+  overflow: hidden;
+}
+
+.money span {
+  padding: 0 10px 0 14px;
+  font-family: var(--font-data);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.money input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 12px 12px 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-data);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.money input:focus {
+  outline: none;
+}
+
+.money:focus-within {
+  box-shadow: 0 0 0 3px var(--slab-yellow), 0 0 0 5px var(--ink);
+}
+
+.field select {
+  width: 100%;
+  padding: 12px;
+  border: var(--border);
+  border-radius: 10px;
+  background: var(--acrylic);
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.warn {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 4px solid var(--down);
+  background: var(--acrylic);
+  font-size: 0.85rem;
+}
+
+/* Checklist */
+.checklist {
+  display: grid;
+  gap: 20px;
+}
+
+.checkItem {
+  display: grid;
+  gap: 6px;
+}
+
+.checkTitle {
+  margin: 0;
+  font-weight: 800;
+}
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.segmented label {
+  position: relative;
+  padding: 8px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.segmented label:hover {
+  background: var(--acrylic);
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented label:has(input:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.segmented .segOn,
+.segmented .segOn:hover {
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+/* ---------- Resultado ---------- */
+.result {
+  position: sticky;
+  top: 88px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: 8px 8px 0 var(--ink);
+  overflow: hidden;
+}
+
+.resultEmpty {
+  padding: 24px;
+}
+
+.resultEmpty h2 {
+  margin: 4px 0 8px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+}
+
+.resultEmpty p:last-child {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.resultKicker {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Etiqueta do veredito, como a etiqueta de um slab */
+.verdict {
+  display: grid;
+  gap: 2px;
+  padding: 16px 20px;
+  border-bottom: var(--border);
+}
+
+.verdict strong {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: 1.9rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.vVale {
+  background: var(--up);
+  color: #f3fbf6;
+}
+
+.vSo10 {
+  background: var(--slab-yellow);
+  color: var(--ink);
+}
+
+.vNao {
+  background: var(--down);
+  color: #fff6f3;
+}
+
+.resultBody {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.bigNumber {
+  display: grid;
+  gap: 2px;
+}
+
+.bigNumber span {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.bigNumber strong {
+  font-family: var(--font-data);
+  font-size: 2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.pos {
+  color: var(--up);
+}
+
+.neg {
+  color: var(--down);
+}
+
+.sentence {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cheapTip {
+  padding: 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  background: var(--slab-yellow);
+  font-size: 0.88rem;
+}
+
+.cheapTip p {
+  margin: 4px 0 8px;
+}
+
+.cheapTip ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--ink-soft);
+  text-align: left;
+}
+
+.table thead th {
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 2px solid var(--ink);
+}
+
+.table td {
+  font-family: var(--font-data);
+}
+
+.table td:last-child,
+.table th:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bar {
+  display: inline-block;
+  width: calc(var(--w) * 0.6);
+  max-width: 60px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 2px;
+  background: var(--ink);
+  vertical-align: middle;
+}
+
+.tiny {
+  margin: -8px 0 0;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.costs {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--acrylic);
+  font-size: 0.88rem;
+}
+
+.costs div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.costs dt {
+  min-width: 0;
+}
+
+.costs dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.costsTotal {
+  padding-top: 6px;
+  border-top: 2px solid var(--ink);
+  font-weight: 800;
+}
+
+.wait {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ---------- Dicas ---------- */
+.tips {
+  margin-top: 24px;
+}
+
+.tips ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tips li {
+  padding: 18px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+
+.tips li strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 960px) {
+  .calc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .result {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .step {
+    padding: 18px;
+  }
+
+  .grid2,
+  .tips ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .picked {
+    align-items: flex-start;
+  }
+
+  .pickedImg {
+    width: 88px;
+  }
+}

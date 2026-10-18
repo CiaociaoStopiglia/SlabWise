@@ -1,0 +1,255 @@
+/* src/app/entrar/entrar.module.css */
+/* Página Entrar / Criar conta. Cores e fontes vêm do page.module.css da home (.page). */
+
+.main {
+  background: var(--slab-yellow);
+  border-bottom: var(--border);
+}
+
+.inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 64px var(--gutter-r) 80px var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+  gap: 56px;
+  align-items: center;
+}
+
+/* Lado esquerdo */
+.pitch {
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 28px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.perks {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perks li {
+  display: grid;
+  gap: 2px;
+  padding-left: 26px;
+  position: relative;
+}
+
+.perks li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  background: linear-gradient(var(--ink) 0 35%, transparent 35%);
+}
+
+.perks strong {
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+}
+
+.perks span {
+  color: var(--ink-soft);
+}
+
+/* Card em forma de slab */
+.slab {
+  border: var(--border);
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: 10px 10px 0 var(--ink);
+  overflow: hidden;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: var(--border);
+}
+
+.tabs a {
+  padding: 16px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  text-decoration: none;
+  background: var(--acrylic);
+}
+
+.tabs a + a {
+  border-left: var(--border);
+}
+
+.tabs a:hover {
+  background: var(--paper);
+}
+
+.tabs .tabOn,
+.tabs .tabOn:hover {
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+/* Formulário */
+.form {
+  display: grid;
+  gap: 18px;
+  padding: 28px 28px 8px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 13px 14px;
+  border: var(--border);
+  border-radius: 10px;
+  background: var(--acrylic);
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.field input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--slab-yellow), 0 0 0 5px var(--ink);
+}
+
+.password {
+  position: relative;
+}
+
+.password input {
+  padding-right: 96px;
+}
+
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.help {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1.5px solid var(--down);
+  border-left-width: 5px;
+  border-radius: 8px;
+  background: var(--paper);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.submit {
+  margin-top: 4px;
+  padding: 15px 20px;
+  border: var(--border);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--ink);
+  background: #2c2a22;
+}
+
+.submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.switch {
+  margin: 0;
+  padding: 16px 28px 26px;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.switch a {
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+    padding-top: 40px;
+    padding-bottom: 56px;
+  }
+
+  .pitch {
+    order: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .form {
+    padding: 22px 18px 6px;
+  }
+
+  .switch {
+    padding: 14px 18px 22px;
+  }
+
+  .slab {
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submit {
+    transition: none;
+  }
+}

@@ -1,11 +1,20 @@
+// app/page.jsx
+// Home do Slabwise (endereço: /)
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { buscarCartas, cotacaoDoDia, formatarReais } from '../lib/tcgdex';
 import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import styles from './page.module.css';
+import Cabecalho from '../components/Cabecalho';
+import HeroEntrance from '../components/home/HeroEntrance';
+import TiltStage from '../components/home/TiltStage';
+import Reveal from '../components/home/Reveal';
+import CardCarousel from '../components/home/CardCarousel';
+import CountUp from '../components/home/CountUp';
 
-// Regenera a página a cada 6 horas com preços novos.
-export const revalidate = 21600;
+// Os preços ficam em cache por 6 horas (dentro do lib/tcgdex.js).
+// A página em si é gerada a cada visita, porque o topo muda se a pessoa tá logada.
 
 function Variacao({ valor }) {
     if (valor === null || Number.isNaN(valor)) return null;
@@ -97,28 +106,13 @@ export default async function Home() {
 
     return (
         <div className={`${styles.page} ${archivo.variable} ${plexMono.variable}`}>
-            <header className={styles.nav}>
-                <div className={styles.navInner}>
-                    <Link href="/" className={styles.logo} aria-label="Slabwise, página inicial">
-                        <span className={styles.logoMark} aria-hidden="true" />
-                        slabwise
-                    </Link>
-                    <nav className={styles.navLinks} aria-label="Principal">
-                        <Link href="/busca">Preços</Link>
-                        <Link href="/graduar">Vale graduar?</Link>
-                        <Link href="/colecao">Minha coleção</Link>
-                    </nav>
-                    <Link href="/entrar" className={styles.navCta}>
-                        Entrar
-                    </Link>
-                </div>
-            </header>
+            <Cabecalho />
 
             <main>
                 {/* HERO */}
                 <section className={styles.hero}>
                     <div className={styles.heroInner}>
-                        <div className={styles.heroText}>
+                        <HeroEntrance className={styles.heroText}>
                             <p className={styles.eyebrow}>Preço de carta Pokémon TCG em real</p>
                             <h1 className={styles.title}>
                                 Quanto vale
@@ -162,12 +156,12 @@ export default async function Home() {
                                     ))}
                                 </ul>
                             </div>
-                        </div>
+                        </HeroEntrance>
 
                         {/* Slab ilustrativo: carta graduada de exemplo */}
-                        <div
+                        <TiltStage
                             className={styles.slabStage}
-                            aria-label="Exemplo de carta graduada com preço">
+                            label="Exemplo de carta graduada com preço">
                             <div className={styles.slab}>
                                 {destaque ? (
                                     <div className={styles.slabLabel}>
@@ -250,7 +244,7 @@ export default async function Home() {
                                     <span className={styles.up}>▲ 12% em 30 dias</span>
                                 </div>
                             )}
-                        </div>
+                        </TiltStage>
                     </div>
                 </section>
 
@@ -262,32 +256,17 @@ export default async function Home() {
                             <p className={styles.sectionLead}>
                                 As cartas modernas e clássicas que mais valem hoje.
                             </p>
-                            <ul className={styles.cardStrip}>
-                                {cartas.map((c) => (
-                                    <li key={c.id}>
-                                        <Link
-                                            href={`/busca?q=${encodeURIComponent(c.name)}`}
-                                            className={styles.cardTile}>
-                                            <Image
-                                                src={c.images.small}
-                                                alt={`Carta ${c.name} · ${c.set} ${c.number}`}
-                                                width={245}
-                                                height={337}
-                                                className={styles.cardTileImage}
-                                            />
-                                            <strong>{c.name}</strong>
-                                            <span className={styles.tileSet}>
-                                                {c.set} · {c.number}
-                                            </span>
-                                            <span className={styles.tilePrice}>
-                                                {c.preco
-                                                    ? formatarReais(c.preco.valor)
-                                                    : 'Ver preço'}
-                                            </span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
+                            <CardCarousel
+                                styles={styles}
+                                cartas={cartas.map((c) => ({
+                                    id: c.id,
+                                    name: c.name,
+                                    set: c.set,
+                                    number: c.number,
+                                    imagem: c.images.small,
+                                    preco: c.preco ? formatarReais(c.preco.valor) : 'Ver preço',
+                                }))}
+                            />
                             <p className={styles.sourceNote}>
                                 Preço de carta sem graduar em estado Near Mint, com dados da
                                 TCGplayer e da Cardmarket (via TCGdex).
@@ -300,11 +279,11 @@ export default async function Home() {
 
                 {/* COMO FUNCIONA */}
                 <section className={styles.section}>
-                    <div className={styles.sectionInner}>
+                    <Reveal className={styles.sectionInner}>
                         <h2 className={styles.sectionTitle}>Como funciona</h2>
                         <ol className={styles.steps}>
                             {passos.map((p, i) => (
-                                <li key={p.titulo} className={styles.step}>
+                                <li key={p.titulo} className={styles.step} data-reveal>
                                     <span className={styles.stepNum}>
                                         {String(i + 1).padStart(2, '0')}
                                     </span>
@@ -313,7 +292,7 @@ export default async function Home() {
                                 </li>
                             ))}
                         </ol>
-                    </div>
+                    </Reveal>
                 </section>
 
                 {/* VALE GRADUAR */}
@@ -347,7 +326,9 @@ export default async function Home() {
                             </dl>
                             <div className={styles.receiptTotal}>
                                 <span>Ganho vs. vender sem graduar</span>
-                                <strong>+ R$ 765</strong>
+                                <strong>
+                                    <CountUp value={765} prefix="+ R$ " />
+                                </strong>
                             </div>
                             <p className={styles.receiptNote}>
                                 Só compensa se a carta tirar 10. Com nota 9, o ganho cai para R$ 40.
@@ -358,7 +339,7 @@ export default async function Home() {
 
                 {/* PLANOS */}
                 <section className={styles.section}>
-                    <div className={styles.sectionInner}>
+                    <Reveal className={styles.sectionInner}>
                         <h2 className={styles.sectionTitle}>Ver preço é de graça</h2>
                         <p className={styles.sectionLead}>
                             Você só paga se quiser as ferramentas de quem coleciona sério.
@@ -367,6 +348,7 @@ export default async function Home() {
                             {planos.map((plano) => (
                                 <article
                                     key={plano.nome}
+                                    data-reveal
                                     className={`${styles.plan} ${plano.destaque ? styles.planPro : ''}`}>
                                     <h3>{plano.nome}</h3>
                                     <p className={styles.planPrice}>
@@ -389,7 +371,7 @@ export default async function Home() {
                                 </article>
                             ))}
                         </div>
-                    </div>
+                    </Reveal>
                 </section>
             </main>
 

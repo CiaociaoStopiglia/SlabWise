@@ -1,5 +1,6 @@
 import './globals.css';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import SmoothScroll from '../components/home/SmoothScroll';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
         <html lang="pt-BR">
             <body className="min-h-screen antialiased">
                 <AntdRegistry>{children}</AntdRegistry>
+                <SmoothScroll />
                 <Toaster />
             </body>
         </html>

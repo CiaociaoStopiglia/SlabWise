@@ -137,6 +137,20 @@
   color: var(--down);
 }
 
+.simLink {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.simLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .noPrice {
   font-size: 0.82rem;
   color: var(--ink-soft);

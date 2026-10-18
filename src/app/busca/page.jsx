@@ -1,8 +1,12 @@
+// app/busca/page.jsx
+// Página de busca de cartas (endereço: /busca?q=...)
+
 import Link from "next/link";
 import Image from "next/image";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { pesquisarCartas, formatarReais } from "../../lib/tcgdex";
-import base from "../page.module.css"; // cores, header, rodapé e tiles da home
+import Cabecalho from "../../components/Cabecalho";
+import base from "../page.module.css"; // cores, rodapé e tiles da home
 import styles from "./busca.module.css";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
@@ -53,24 +57,7 @@ export default async function Busca({ searchParams }) {
 
   return (
     <div className={`${base.page} ${archivo.variable} ${plexMono.variable}`}>
-      <header className={base.nav}>
-        <div className={base.navInner}>
-          <Link href="/" className={base.logo} aria-label="Slabwise, página inicial">
-            <span className={base.logoMark} aria-hidden="true" />
-            slabwise
-          </Link>
-          <nav className={base.navLinks} aria-label="Principal">
-            <Link href="/busca" aria-current="page">
-              Preços
-            </Link>
-            <Link href="/graduar">Vale graduar?</Link>
-            <Link href="/colecao">Minha coleção</Link>
-          </nav>
-          <Link href="/entrar" className={base.navCta}>
-            Entrar
-          </Link>
-        </div>
-      </header>
+      <Cabecalho ativo="busca" />
 
       <main>
         {/* Faixa de busca */}
@@ -196,6 +183,9 @@ export default async function Busca({ searchParams }) {
                             <span className={styles.noPrice}>Sem preço no momento</span>
                           )}
                         </div>
+                        <Link href={`/graduar?carta=${encodeURIComponent(c.id)}`} className={styles.simLink}>
+                          Vale graduar? →
+                        </Link>
                       </article>
                     </li>
                   ))}
