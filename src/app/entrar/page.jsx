@@ -16,7 +16,7 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-export const metadata = { title: "Entrar | Slabwise" };
+export const metadata = { title: "Entrar | Slabbit" };
 
 const vantagens = [
   { titulo: "Sua coleção com preço", texto: "Veja quanto suas cartas valem hoje, somadas, em real." },
@@ -39,7 +39,7 @@ export default async function Entrar({ searchParams }) {
       <main className={styles.main}>
         <div className={styles.inner}>
           <section className={styles.pitch}>
-            <p className={base.eyebrow}>Conta Slabwise</p>
+            <p className={base.eyebrow}>Conta Slabbit</p>
             <h1 className={styles.title}>{cadastro ? "Crie sua conta grátis" : "Bem-vindo de volta"}</h1>
             <ul className={styles.perks}>
               {vantagens.map((v) => (
@@ -83,10 +83,10 @@ export default async function Entrar({ searchParams }) {
         <div className={base.footerInner}>
           <span className={base.logo}>
             <span className={base.logoMark} aria-hidden="true" />
-            slabwise
+            slabbit
           </span>
           <p>
-            Sua senha é guardada com criptografia e nunca é compartilhada. Slabwise é um projeto independente e não tem
+            Sua senha é guardada com criptografia e nunca é compartilhada. Slabbit é um projeto independente e não tem
             relação com Nintendo, Creatures, GAME FREAK ou The Pokémon Company.
           </p>
         </div>

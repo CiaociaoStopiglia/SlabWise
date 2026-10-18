@@ -1,6 +1,6 @@
 -- db/schema.sql
 -- =====================================================================
--- SLABWISE · banco de dados (PostgreSQL)
+-- SLABBIT · banco de dados (PostgreSQL)
 -- Rode no pgAdmin: clique no banco "slabwise" > Query Tool > cole tudo > Execute (F5)
 -- =====================================================================
 

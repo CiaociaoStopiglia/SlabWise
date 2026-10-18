@@ -30,7 +30,7 @@ const ORDENS = {
 
 export async function generateMetadata({ searchParams }) {
   const { q = "" } = await searchParams;
-  return { title: q ? `${q} · preço em real | Slabwise` : "Buscar carta | Slabwise" };
+  return { title: q ? `${q} · preço em real | Slabbit` : "Buscar carta | Slabbit" };
 }
 
 function Variacao({ valor }) {
@@ -211,10 +211,10 @@ export default async function Busca({ searchParams }) {
         <div className={base.footerInner}>
           <span className={base.logo}>
             <span className={base.logoMark} aria-hidden="true" />
-            slabwise
+            slabbit
           </span>
           <p>
-            Slabwise é um projeto independente e não tem relação com Nintendo, Creatures, GAME FREAK ou The Pokémon
+            Slabbit é um projeto independente e não tem relação com Nintendo, Creatures, GAME FREAK ou The Pokémon
             Company. Os preços são estimativas de mercado e não são recomendação de investimento.
           </p>
         </div>

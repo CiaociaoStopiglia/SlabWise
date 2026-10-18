@@ -1,5 +1,5 @@
 {
-    "name": "slabwise",
+    "name": "slabbit",
     "version": "1.0.0",
     "description": "Projeto template padrão didático de front-end com Next.js 16 (App Router) e React 19.",
     "private": true,

@@ -149,7 +149,7 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
             <CampoReais
               id="cru"
               rotulo="Sem graduar"
-              ajuda={carta?.preco ? "Preço de hoje no Slabwise. Pode ajustar." : "Quanto você venderia ela hoje."}
+              ajuda={carta?.preco ? "Preço de hoje no Slabbit. Pode ajustar." : "Quanto você venderia ela hoje."}
               valor={valores.cru}
               onChange={mudarValor("cru")}
               placeholder="0"

@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 import { cookies, headers } from "next/headers";
 import { query } from "./db";
 
-const COOKIE = "slabwise_sessao";
+const COOKIE = "slabbit_sessao";
 const DIAS_DE_SESSAO = 30;
 const CUSTO_BCRYPT = 12;
 
@@ -67,7 +67,7 @@ export const usuarioAtual = cache(async () => {
     );
     return rows[0] ?? null;
   } catch (erro) {
-    console.error("[slabwise] erro ao ler a sessão:", erro.message);
+    console.error("[slabbit] erro ao ler a sessão:", erro.message);
     return null;
   }
 });

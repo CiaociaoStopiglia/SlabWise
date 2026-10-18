@@ -23,7 +23,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata = {
-    title: 'Planos e preços | Slabwise',
+    title: 'Planos e preços | Slabbit',
     description: 'Ver o preço da carta é grátis. O Pro libera alertas, simulador de graduação e coleção sem limite.',
 };
 
@@ -288,10 +288,10 @@ export default function Precos() {
                 <div className={base.footerInner}>
                     <span className={base.logo}>
                         <span className={base.logoMark} aria-hidden="true" />
-                        slabwise
+                        slabbit
                     </span>
                     <p>
-                        Slabwise é um projeto independente e não tem relação com Nintendo,
+                        Slabbit é um projeto independente e não tem relação com Nintendo,
                         Creatures, GAME FREAK ou The Pokémon Company. Os preços são estimativas de
                         mercado e não são recomendação de investimento.
                     </p>

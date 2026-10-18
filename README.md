@@ -1,8 +1,8 @@
-# Slabwise
+# Slabbit
 
 Site em português que mostra o **preço de cartas Pokémon em reais**, calcula se **vale a pena graduar** a carta na PSA e guarda a **coleção** de cada colecionador.
 
-O problema que resolve: os preços das cartas estão em dólar ou euro, e quem coleciona no Brasil ainda precisa somar taxa da PSA, frete, imposto e risco da nota. O Slabwise junta tudo isso em reais, numa página só.
+O problema que resolve: os preços das cartas estão em dólar ou euro, e quem coleciona no Brasil ainda precisa somar taxa da PSA, frete, imposto e risco da nota. O Slabbit junta tudo isso em reais, numa página só.
 
 ## O que o site faz
 
@@ -83,5 +83,5 @@ src/
 - Criar a página **Minha coleção** (`/colecao`): o link já está no cabeçalho e a tabela já existe.
 - Salvar simulações e recuperar senha (tabelas prontas, falta a interface).
 - Cobrança do plano Pro e alertas de preço.
-- Trocar título, descrição e autores do template Codeverse em `layout.js` e `package.json`, e remover `Nome-do-componente`.
+- Trocar descrição, autores e homepage do template Codeverse em `package.json`, e remover `Nome-do-componente`.
 - Calibrar as chances de nota com dados reais de população da PSA.

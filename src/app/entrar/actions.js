@@ -44,7 +44,7 @@ export async function cadastrar(_estadoAnterior, formData) {
     if (erro.code === "23505") {
       return { erro: "Já existe uma conta com esse e-mail. Use a aba Entrar.", valores };
     }
-    console.error("[slabwise] erro no cadastro:", erro.message);
+    console.error("[slabbit] erro no cadastro:", erro.message);
     return { erro: "Não conseguimos criar sua conta agora. Tente de novo em alguns segundos.", valores };
   }
 
@@ -63,7 +63,7 @@ export async function entrar(_estadoAnterior, formData) {
     const { rows } = await query("select id, senha_hash from usuarios where email = $1", [email]);
     usuario = rows[0];
   } catch (erro) {
-    console.error("[slabwise] erro no login:", erro.message);
+    console.error("[slabbit] erro no login:", erro.message);
     return { erro: "Não conseguimos entrar agora. Tente de novo em alguns segundos.", valores };
   }
 

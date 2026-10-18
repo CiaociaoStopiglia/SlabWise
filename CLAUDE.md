@@ -4,7 +4,7 @@ Contexto do projeto para o Claude. Visão geral e histórico completo estão no 
 
 ## O que é
 
-**Slabwise**: site em português (pt-BR) que mostra o preço de cartas Pokémon em **reais**, simula se **vale a pena graduar** a carta na PSA e guarda a coleção do usuário. Público: colecionadores brasileiros.
+**Slabbit**: site em português (pt-BR) que mostra o preço de cartas Pokémon em **reais**, simula se **vale a pena graduar** a carta na PSA e guarda a coleção do usuário. Público: colecionadores brasileiros.
 
 ## Stack
 
@@ -61,7 +61,6 @@ O banco é criado rodando `src/db/schema.sql` no pgAdmin (Postgres 15+, usa `cit
 - A rota `/colecao` aparece no cabeçalho, mas **ainda não existe** (tabela `colecao` já está no banco).
 - Salvar simulações (`simulacoes`) e recuperação de senha (`recuperacoes_senha`) têm tabela, mas não têm tela/ação.
 - Pagamento do plano Pro não está implementado (`plano`/`pro_ate` só existem no banco).
-- `metadata` em `layout.js` ainda é o título do template ("FrontEnd - Codeverse").
-- `package.json` ainda tem nome/autores/descrição do template Codeverse.
+- `package.json` ainda tem autores, descrição e homepage do template Codeverse.
 - `src/components/Nome-do-componente.*` é resto do template.
 - Chances de nota do simulador são estimativas, não dados reais de população PSA.

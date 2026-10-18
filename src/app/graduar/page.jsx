@@ -19,7 +19,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata = {
-  title: "Vale a pena graduar? | Slabwise",
+  title: "Vale a pena graduar? | Slabbit",
   description: "Simule em real se compensa mandar sua carta Pokémon pra PSA: taxa, frete, imposto e chance de cada nota.",
 };
 
@@ -173,10 +173,10 @@ export default async function Graduar({ searchParams }) {
         <div className={base.footerInner}>
           <span className={base.logo}>
             <span className={base.logoMark} aria-hidden="true" />
-            slabwise
+            slabbit
           </span>
           <p>
-            Slabwise é um projeto independente e não tem relação com Nintendo, Creatures, GAME FREAK, The Pokémon
+            Slabbit é um projeto independente e não tem relação com Nintendo, Creatures, GAME FREAK, The Pokémon
             Company ou PSA. As simulações são estimativas e não são recomendação de investimento.
           </p>
         </div>

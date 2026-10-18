@@ -4,8 +4,8 @@ import SmoothScroll from '../components/home/SmoothScroll';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
-    title: 'FrontEnd - Codeverse',
-    description: 'Template do Codeverse',
+    title: 'Slabbit',
+    description: 'Preço de cartas Pokémon em reais, simulador de graduação PSA e sua coleção.',
 };
 
 export default function RootLayout({ children }) {

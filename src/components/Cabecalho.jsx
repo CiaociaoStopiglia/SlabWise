@@ -19,9 +19,9 @@ export default async function Cabecalho({ ativo }) {
   return (
     <header className={base.nav}>
       <div className={base.navInner}>
-        <Link href="/" className={base.logo} aria-label="Slabwise, página inicial">
+        <Link href="/" className={base.logo} aria-label="Slabbit, página inicial">
           <span className={base.logoMark} aria-hidden="true" />
-          slabwise
+          slabbit
         </Link>
 
         <nav className={base.navLinks} aria-label="Principal">

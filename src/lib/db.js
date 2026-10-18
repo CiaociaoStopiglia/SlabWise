@@ -10,14 +10,14 @@ const global = globalThis;
 
 function criarPool() {
   if (!process.env.DATABASE_URL) {
-    throw new Error("[slabwise] Falta o DATABASE_URL no .env.local");
+    throw new Error("[slabbit] Falta o DATABASE_URL no .env.local");
   }
   return new Pool({ connectionString: process.env.DATABASE_URL, max: 10 });
 }
 
 function pool() {
-  if (!global._slabwisePool) global._slabwisePool = criarPool();
-  return global._slabwisePool;
+  if (!global._slabbitPool) global._slabbitPool = criarPool();
+  return global._slabbitPool;
 }
 
 /** Roda uma consulta. Sempre passe os valores separados ($1, $2...), nunca dentro do texto. */

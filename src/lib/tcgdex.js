@@ -35,12 +35,12 @@ async function getJSON(url, revalidate, headers) {
       signal: AbortSignal.timeout(TEMPO_LIMITE),
     });
     if (!res.ok) {
-      console.warn(`[slabwise] ${res.status} ao buscar ${url}`);
+      console.warn(`[slabbit] ${res.status} ao buscar ${url}`);
       return null;
     }
     return await res.json();
   } catch (erro) {
-    console.warn(`[slabwise] falha ao buscar ${url}:`, erro.message);
+    console.warn(`[slabbit] falha ao buscar ${url}:`, erro.message);
     return null;
   }
 }
@@ -74,7 +74,7 @@ export async function cotacaoDoDia() {
   const porEur = er?.rates?.EUR;
   if (porUsd && porEur) return { usd: 1 / porUsd, eur: 1 / porEur, fonte: "ExchangeRate-API" };
 
-  console.warn("[slabwise] câmbio indisponível, usando cotação de reserva");
+  console.warn("[slabbit] câmbio indisponível, usando cotação de reserva");
   return { ...COTACAO_RESERVA, fonte: "reserva" };
 }
 
@@ -174,7 +174,7 @@ async function cartaMaisValiosa(nome, cotacao) {
     resumos = await getJSON(`${TCGDEX}/cards?name=${encodeURIComponent(nome)}`, CACHE_CARTAS);
   }
   if (!Array.isArray(resumos) || resumos.length === 0) {
-    console.warn(`[slabwise] nenhuma carta encontrada para "${nome}"`);
+    console.warn(`[slabbit] nenhuma carta encontrada para "${nome}"`);
     return null;
   }
 
@@ -289,7 +289,7 @@ export async function buscarCartas() {
   );
 
   const comPreco = cartas.filter((c) => c.preco).length;
-  console.log(`[slabwise] ${cartas.length} cartas, ${comPreco} com preço (câmbio: ${cotacao.fonte})`);
+  console.log(`[slabbit] ${cartas.length} cartas, ${comPreco} com preço (câmbio: ${cotacao.fonte})`);
 
   return cartas.sort((a, b) => (b.preco?.valor ?? -1) - (a.preco?.valor ?? -1));
 }

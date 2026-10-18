@@ -1,5 +1,5 @@
 // app/page.jsx
-// Home do Slabwise (endereço: /)
+// Home do Slabbit (endereço: /)
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -302,7 +302,7 @@ export default async function Home() {
                             <p className={styles.eyebrowDark}>Simulador de graduação</p>
                             <h2 className={styles.sectionTitle}>Vale a pena mandar pra PSA?</h2>
                             <p>
-                                Graduar custa caro e demora. O Slabwise faz a conta com taxa, frete
+                                Graduar custa caro e demora. O Slabbit faz a conta com taxa, frete
                                 e imposto em real, e mostra se a nota que a sua carta pode tirar
                                 paga o investimento.
                             </p>
@@ -379,10 +379,10 @@ export default async function Home() {
                 <div className={styles.footerInner}>
                     <span className={styles.logo}>
                         <span className={styles.logoMark} aria-hidden="true" />
-                        slabwise
+                        slabbit
                     </span>
                     <p>
-                        Slabwise é um projeto independente e não tem relação com Nintendo,
+                        Slabbit é um projeto independente e não tem relação com Nintendo,
                         Creatures, GAME FREAK ou The Pokémon Company. Os preços são estimativas de
                         mercado e não são recomendação de investimento.
                     </p>
