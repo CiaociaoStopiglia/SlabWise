@@ -11,6 +11,7 @@ O problema que resolve: os preços das cartas estão em dólar ou euro, e quem c
 | Home | `/` | Apresentação, cartas em destaque com preço em real, carrossel, planos |
 | Preços | `/precos?q=charizard` | Pesquisa por nome, preço em R$, variação em 30 dias, ordenação por maior/menor preço ou nome |
 | Vale graduar? | `/graduar` | Simulador: escolha a carta, marque o estado (centralização, cantos, bordas, superfície) e veja custo total, chance de cada nota (PSA 10/9/8/7-) e o veredito |
+| Carta | `/carta/base1-4` | Página de cada carta: foto grande, preço em R$ por versão (TCGplayer e Cardmarket), HP, tipo, ataques, fraqueza, ilustrador, e botão para adicionar à coleção |
 | Planos | `/planos` | Grátis x Pro, alternância mensal/anual, tabela comparativa |
 | Minha coleção | `/colecao` | Só logado: valor total em R$, resultado (lucro/prejuízo), busca para adicionar carta (quantidade, estado, graduação, quanto pagou), editar quantidade e remover |
 | Entrar | `/entrar` | Cadastro e login |

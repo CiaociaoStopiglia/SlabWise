@@ -1013,94 +1013,94 @@ button.navCta {
   }
 }
 /* ---------- CENTRALIZAÇÃO ---------- */
-/* Tudo centralizado. Quem herda este arquivo (busca, coleção, graduar...) herda o texto centralizado. */
-.page {
+/* Tudo centralizado, menos a home (.home), que mantém o layout original em duas colunas. */
+.page:not(.home) {
   text-align: center;
 }
 
-.navLinks {
+.page:not(.home) .navLinks {
   margin: 0 auto;
 }
 
-.heroInner {
+.page:not(.home) .heroInner {
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 64px;
 }
 
-.heroText {
+.page:not(.home) .heroText {
   max-width: 46rem;
 }
 
-.lead,
-.sectionLead,
-.search,
-.sourceNote {
+.page:not(.home) .lead,
+.page:not(.home) .sectionLead,
+.page:not(.home) .search,
+.page:not(.home) .sourceNote {
   margin-inline: auto;
 }
 
-.sectionLead,
-.sourceNote {
+.page:not(.home) .sectionLead,
+.page:not(.home) .sourceNote {
   max-width: 44rem;
 }
 
-.popular,
-.popular ul,
-.carouselControls {
+.page:not(.home) .popular,
+.page:not(.home) .popular ul,
+.page:not(.home) .carouselControls {
   justify-content: center;
 }
 
 /* O slab e o recibo são "objetos": o texto dentro deles continua alinhado como num certificado */
-.slabLabel,
-.receipt,
-.priceTag {
+.page:not(.home) .slabLabel,
+.page:not(.home) .receipt,
+.page:not(.home) .priceTag {
   text-align: left;
 }
 
-.gradeGrid {
+.page:not(.home) .gradeGrid {
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 48px;
 }
 
-.gradeText p:not(.eyebrowDark) {
+.page:not(.home) .gradeText p:not(.eyebrowDark) {
   margin-inline: auto;
 }
 
-.receipt {
+.page:not(.home) .receipt {
   width: min(100%, 440px);
 }
 
-.plans {
+.page:not(.home) .plans {
   margin-inline: auto;
 }
 
-.plan ul {
+.page:not(.home) .plan ul {
   text-align: left;
 }
 
-.footerInner {
+.page:not(.home) .footerInner {
   justify-items: center;
 }
 
-.footer p {
+.page:not(.home) .footer p {
   margin-inline: auto;
 }
 
 /* Grade de cartas: o conjunto fica no meio, mas a última linha começa na esquerda, alinhada com a primeira coluna */
-.cardStrip {
+.page:not(.home) .cardStrip {
   grid-template-columns: repeat(auto-fill, 190px);
   justify-content: center;
 }
 
-.cardTile {
+.page:not(.home) .cardTile {
   align-items: center;
 }
 
-.tilePrice {
+.page:not(.home) .tilePrice {
   align-self: center;
 }
 
-.carouselTrack {
+.page:not(.home) .carouselTrack {
   justify-content: center;
 }

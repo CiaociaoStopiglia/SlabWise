@@ -164,14 +164,16 @@ export default async function Busca({ searchParams }) {
                   {ordenadas.map((c) => (
                     <li key={c.id}>
                       <article className={`${base.cardTile} ${styles.tile}`}>
-                        <Image
-                          src={c.images.small}
-                          alt={`Carta ${c.name}${c.set ? ` · ${c.set}` : ""} ${c.number}`}
-                          width={245}
-                          height={337}
-                          className={base.cardTileImage}
-                        />
-                        <strong>{c.name}</strong>
+                        <Link href={`/carta/${encodeURIComponent(c.id)}`} className={styles.fotoLink}>
+                          <Image
+                            src={c.images.small}
+                            alt={`Carta ${c.name}${c.set ? ` · ${c.set}` : ""} ${c.number}`}
+                            width={245}
+                            height={337}
+                            className={base.cardTileImage}
+                          />
+                          <strong>{c.name}</strong>
+                        </Link>
                         <span className={base.tileSet}>
                           {c.set ? `${c.set} · ` : ""}#{c.number}
                         </span>

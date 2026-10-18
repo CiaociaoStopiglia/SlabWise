@@ -405,3 +405,17 @@ p.muted {
 .avisoErro {
   text-align: center;
 }
+
+/* Foto e nome levam pra página da carta */
+.fotoLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.fotoLink:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

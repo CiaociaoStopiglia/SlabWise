@@ -26,7 +26,7 @@ export default function CardCarousel({ cartas, styles }) {
                 style={{ height: "100%" }}
               >
                 <Link
-                  href={`/precos?q=${encodeURIComponent(c.name)}`}
+                  href={`/carta/${encodeURIComponent(c.id)}`}
                   className={styles.cardTile}
                 >
                   <Image

@@ -8,8 +8,15 @@ import { usuarioAtual } from "../../lib/auth";
 import { ESTADOS, GRADUACOES } from "./opcoes";
 
 // Volta pra coleção com um aviso na URL (a página mostra e some no próximo clique).
-function voltar(aviso, tipo = "ok") {
-  redirect(`/colecao?${tipo}=${encodeURIComponent(aviso)}`);
+function voltar(aviso, tipo = "ok", destino = "/colecao") {
+  const sep = destino.includes("?") ? "&" : "?";
+  redirect(`${destino}${sep}${tipo}=${encodeURIComponent(aviso)}`);
+}
+
+// Só volta pra páginas do próprio site: a coleção ou a página de uma carta.
+function destinoSeguro(formData) {
+  const para = String(formData.get("voltar") ?? "");
+  return /^\/(colecao|carta\/[\w.%-]+)$/.test(para) ? para : "/colecao";
 }
 
 async function exigirLogin() {
@@ -33,6 +40,7 @@ function lerValor(texto) {
 
 export async function adicionarCarta(formData) {
   const usuario = await exigirLogin();
+  const destino = destinoSeguro(formData);
 
   const cartaId = String(formData.get("carta_id") ?? "").trim();
   const graduacaoBruta = String(formData.get("graduacao") ?? "");
@@ -47,7 +55,7 @@ export async function adicionarCarta(formData) {
   const precoPago = lerValor(formData.get("preco_pago"));
 
   if (!cartaId || cartaId.length > 40)
-    voltar("Não achamos essa carta. Busque de novo.", "erro");
+    voltar("Não achamos essa carta. Busque de novo.", "erro", destino);
 
   try {
     // Já tem a mesma carta (mesmo estado e graduação)? Soma a quantidade.
@@ -71,14 +79,15 @@ export async function adicionarCarta(formData) {
       voltar(
         "O plano grátis guarda até 100 cartas. Remova alguma ou assine o Pro.",
         "erro",
+        destino,
       );
     }
     console.error("[slabbit] erro ao adicionar carta:", erro.message);
-    voltar("Não conseguimos salvar a carta agora. Tente de novo.", "erro");
+    voltar("Não conseguimos salvar a carta agora. Tente de novo.", "erro", destino);
   }
 
   revalidatePath("/colecao");
-  voltar("Carta adicionada à sua coleção.");
+  voltar("Carta adicionada à sua coleção.", "ok", destino);
 }
 
 export async function atualizarQuantidade(formData) {

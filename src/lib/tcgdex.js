@@ -81,6 +81,14 @@ export async function cotacaoDoDia() {
 // Ordem de preferência das versões da carta na TCGplayer.
 const VARIANTES = ["holofoil", "holo", "normal", "1stEditionHolofoil", "unlimitedHolofoil", "reverse-holofoil", "reverse"];
 
+// A Cardmarket separa os números da versão normal e da holo. Cartas holo têm o preço real
+// nos campos "-holo" (os normais ficam baixos ou zerados), então usamos o conjunto mais alto.
+function camposCardmarket(cm) {
+  const holo = (cm?.["trend-holo"] ?? 0) > (cm?.trend ?? 0);
+  const k = (nome) => cm?.[holo ? `${nome}-holo` : nome] ?? null;
+  return { trend: k("trend"), avg7: k("avg7"), avg30: k("avg30"), low: k("low") ?? cm?.low ?? null };
+}
+
 /**
  * Converte o preço da carta para reais.
  * Usa o preço de mercado da TCGplayer; se não houver, usa a tendência da Cardmarket.
@@ -107,7 +115,7 @@ export function precoEmReais(pricing, cotacao) {
   }
 
   if (valor === null && cm && cotacao.eur) {
-    const tendencia = cm.trend ?? cm["trend-holo"] ?? cm.avg;
+    const tendencia = camposCardmarket(cm).trend || cm.avg;
     if (typeof tendencia === "number" && tendencia > 0) {
       valor = tendencia * cotacao.eur;
       fonte = "Cardmarket";
@@ -117,8 +125,9 @@ export function precoEmReais(pricing, cotacao) {
   if (valor === null) return null;
 
   let variacao30 = null;
-  if (cm?.trend && cm?.avg30) {
-    variacao30 = (cm.trend / cm.avg30 - 1) * 100;
+  const campos = camposCardmarket(cm);
+  if (campos.trend && campos.avg30) {
+    variacao30 = (campos.trend / campos.avg30 - 1) * 100;
   }
 
   return { valor, fonte, variacao30 };
@@ -155,6 +164,89 @@ export async function buscarCartaPorId(id, cotacao) {
   const c = await getJSON(`${TCGDEX}/cards/${encodeURIComponent(id)}`, CACHE_CARTAS);
   if (!c?.image) return null;
   return normalizarCarta(c, cotacao ?? (await cotacaoDoDia()));
+}
+
+const TIPOS_PT = {
+  Grass: "Planta",
+  Fire: "Fogo",
+  Water: "Água",
+  Lightning: "Elétrico",
+  Psychic: "Psíquico",
+  Fighting: "Lutador",
+  Darkness: "Sombrio",
+  Metal: "Metal",
+  Dragon: "Dragão",
+  Fairy: "Fada",
+  Colorless: "Incolor",
+};
+const CATEGORIAS_PT = { Pokemon: "Pokémon", Trainer: "Treinador", Energy: "Energia" };
+const ESTAGIOS_PT = { Basic: "Básico", Stage1: "Estágio 1", Stage2: "Estágio 2", VMAX: "VMAX", VSTAR: "VSTAR", MEGA: "Mega" };
+
+export const tipoEmPortugues = (t) => TIPOS_PT[t] ?? t;
+
+/**
+ * Tudo sobre uma carta, pra página dela (/carta/ID).
+ * Devolve a carta normalizada (como na busca) mais os detalhes, ou null se não achar.
+ */
+export async function buscarDetalhesDaCarta(id, cotacao) {
+  const c = await getJSON(`${TCGDEX}/cards/${encodeURIComponent(id)}`, CACHE_CARTAS);
+  if (!c?.image) return null;
+  cotacao ??= await cotacaoDoDia();
+  const base = normalizarCarta(c, cotacao);
+
+  // Preço por versão da carta (normal, holo, reverse...) na TCGplayer, em reais.
+  const versoes = [];
+  const tcg = c.pricing?.tcgplayer;
+  if (tcg && cotacao.usd) {
+    for (const [nome, v] of Object.entries(tcg)) {
+      if (v && typeof v === "object" && typeof v.marketPrice === "number") {
+        versoes.push({
+          nome,
+          mercado: v.marketPrice * cotacao.usd,
+          minimo: typeof v.lowPrice === "number" ? v.lowPrice * cotacao.usd : null,
+          maximo: typeof v.highPrice === "number" ? v.highPrice * cotacao.usd : null,
+        });
+      }
+    }
+  }
+  const cm = c.pricing?.cardmarket;
+  const cmc = camposCardmarket(cm);
+  const cardmarket =
+    cm && cotacao.eur && cmc.trend
+      ? {
+          tendencia: cmc.trend * cotacao.eur,
+          media7: cmc.avg7 ? cmc.avg7 * cotacao.eur : null,
+          media30: cmc.avg30 ? cmc.avg30 * cotacao.eur : null,
+          minimo: cmc.low ? cmc.low * cotacao.eur : null,
+        }
+      : null;
+
+  return {
+    ...base,
+    categoria: CATEGORIAS_PT[c.category] ?? c.category ?? null,
+    ilustrador: c.illustrator ?? null,
+    hp: c.hp ?? null,
+    tipos: (c.types ?? []).map(tipoEmPortugues),
+    estagio: ESTAGIOS_PT[c.stage] ?? c.stage ?? null,
+    evoluiDe: c.evolveFrom ?? null,
+    descricao: c.description ?? null,
+    efeito: c.effect ?? null, // cartas de Treinador e Energia
+    recuo: c.retreat ?? null,
+    marca: c.regulationMark ?? null,
+    ataques: (c.attacks ?? []).map((a) => ({
+      nome: a.name,
+      custo: (a.cost ?? []).map(tipoEmPortugues),
+      dano: a.damage ?? null,
+      efeito: a.effect ?? null,
+    })),
+    habilidades: (c.abilities ?? []).map((a) => ({ tipo: a.type ?? null, nome: a.name, efeito: a.effect })),
+    fraquezas: (c.weaknesses ?? []).map((w) => ({ tipo: tipoEmPortugues(w.type), valor: w.value ?? null })),
+    resistencias: (c.resistances ?? []).map((w) => ({ tipo: tipoEmPortugues(w.type), valor: w.value ?? null })),
+    legal: c.legal ?? null,
+    versoes,
+    cardmarket,
+    logoDoSet: c.set?.logo ? `${c.set.logo}.webp` : null,
+  };
 }
 
 // Pega itens espalhados pela lista, para comparar versões de várias épocas.

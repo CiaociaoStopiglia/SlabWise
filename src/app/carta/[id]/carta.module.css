@@ -1,0 +1,294 @@
+/* Página de uma carta. Cores, fontes e botões vêm do page.module.css da home. */
+
+.band {
+  background: var(--slab-yellow);
+  border-bottom: var(--border);
+}
+
+.bandInner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 36px var(--gutter-r) 36px var(--gutter);
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.migalhas {
+  display: flex;
+  gap: 8px;
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+/* Foto e caixas lado a lado */
+.corpo {
+  border-bottom: var(--border);
+}
+
+.corpoInner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px var(--gutter-r) 56px var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.foto {
+  position: sticky;
+  top: 96px;
+}
+
+.fotoImg {
+  width: 100%;
+  height: auto;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+.lado {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.caixa {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding: 24px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+
+.preco {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.fonte {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.alta,
+.baixa {
+  font-family: var(--font-data);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.alta {
+  color: var(--up);
+}
+
+.baixa {
+  color: var(--down);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabela caption {
+  padding: 8px 0;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.tabela th,
+.tabela td {
+  padding: 8px 6px;
+  border-top: 1px dashed var(--ink-soft);
+  text-align: right;
+}
+
+.tabela th:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+
+.tabela thead th {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-top: 0;
+}
+
+.link {
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+/* O formulário de adicionar já vem aberto nessa página */
+.caixa details {
+  width: 100%;
+  padding-top: 0;
+}
+
+.caixa summary {
+  pointer-events: none;
+}
+
+/* Informações */
+.infos {
+  border-bottom: var(--border);
+}
+
+.infosInner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px var(--gutter-r) 64px var(--gutter);
+  display: grid;
+  gap: 24px;
+  justify-items: center;
+}
+
+.ficha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+}
+
+.ficha div {
+  padding: 12px 14px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.ficha dt {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.ficha dd {
+  margin: 2px 0 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.texto,
+.descricao {
+  max-width: 44rem;
+  margin: 0;
+}
+
+.descricao {
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.golpes {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.golpes li {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.golpes strong {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.dano {
+  padding: 1px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: var(--slab-yellow);
+  font-family: var(--font-data);
+  font-size: 0.9rem;
+}
+
+.golpes small {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+}
+
+.golpes p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 800px) {
+  .corpoInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .foto {
+    position: static;
+    width: min(100%, 340px);
+    margin-inline: auto;
+  }
+}

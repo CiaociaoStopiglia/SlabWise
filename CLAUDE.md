@@ -21,6 +21,7 @@ Contexto do projeto para o Claude. Visão geral e histórico completo estão no 
 - `src/app/page.jsx`: home (landing)
 - `src/app/precos/`: preço das cartas em real (`/precos?q=...`), ordenação por preço/nome (`/busca` só redireciona pra cá)
 - `src/app/graduar/`: simulador "Vale graduar?" (`page.jsx` servidor, `Calculadora.jsx` cliente, `psa.js` com níveis/preços/checklist/chances)
+- `src/app/carta/[id]/`: página de cada carta (`/carta/base1-4`): foto, preço por versão, Cardmarket, ficha, ataques, botão de adicionar à coleção (usa `colecao/FormularioAdicionar.jsx`)
 - `src/app/planos/`: planos Grátis e Pro
 - `src/app/colecao/`: Minha coleção (exige login; busca, adicionar, quantidade, remover; Server Actions em `actions.js`, listas de estado/graduação em `opcoes.js`)
 - `src/app/entrar/`: login/cadastro (`actions.js` são Server Actions)

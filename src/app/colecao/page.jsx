@@ -14,8 +14,9 @@ import {
   pesquisarCartas,
 } from "../../lib/tcgdex";
 import Cabecalho from "../../components/Cabecalho";
-import { adicionarCarta, atualizarQuantidade, removerCarta } from "./actions";
-import { ESTADOS, GRADUACOES } from "./opcoes";
+import { atualizarQuantidade, removerCarta } from "./actions";
+import FormularioAdicionar from "./FormularioAdicionar";
+import { ESTADOS } from "./opcoes";
 import base from "../page.module.css";
 import styles from "./colecao.module.css";
 
@@ -35,60 +36,6 @@ const plexMono = IBM_Plex_Mono({
 export const metadata = { title: "Minha coleção | Slabbit" };
 
 const LIMITE_GRATIS = 100;
-
-function FormularioAdicionar({ carta }) {
-  return (
-    <details className={styles.add}>
-      <summary>Adicionar à coleção</summary>
-      <form action={adicionarCarta} className={styles.addForm}>
-        <input type="hidden" name="carta_id" value={carta.id} />
-        <label>
-          Quantidade
-          <input
-            name="quantidade"
-            type="number"
-            min="1"
-            max="999"
-            defaultValue="1"
-          />
-        </label>
-        <label>
-          Estado
-          <select name="estado" defaultValue="NM">
-            {Object.entries(ESTADOS).map(([valor, rotulo]) => (
-              <option key={valor} value={valor}>
-                {rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Graduada?
-          <select name="graduacao" defaultValue="">
-            <option value="">Não, sem graduar</option>
-            {GRADUACOES.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Quanto pagou (R$)
-          <input
-            name="preco_pago"
-            inputMode="decimal"
-            placeholder="Opcional"
-            autoComplete="off"
-          />
-        </label>
-        <button type="submit" className={base.buttonDark}>
-          Salvar
-        </button>
-      </form>
-    </details>
-  );
-}
 
 export default async function Colecao({ searchParams }) {
   const usuario = await usuarioAtual();
@@ -250,6 +197,7 @@ export default async function Colecao({ searchParams }) {
                   {busca.cartas.map((c) => (
                     <li key={c.id}>
                       <article className={`${base.cardTile} ${styles.tile}`}>
+                        <Link href={`/carta/${encodeURIComponent(c.id)}`} className={styles.fotoLink}>
                         <Image
                           src={c.images.small}
                           alt={`Carta ${c.name}${c.set ? ` · ${c.set}` : ""} ${c.number}`}
@@ -258,6 +206,7 @@ export default async function Colecao({ searchParams }) {
                           className={base.cardTileImage}
                         />
                         <strong>{c.name}</strong>
+                        </Link>
                         <span className={base.tileSet}>
                           {c.set ? `${c.set} · ` : ""}#{c.number}
                         </span>
@@ -318,6 +267,7 @@ export default async function Colecao({ searchParams }) {
                   return (
                     <li key={i.id}>
                       <article className={`${base.cardTile} ${styles.tile}`}>
+                        <Link href={`/carta/${encodeURIComponent(i.carta_id)}`} className={styles.fotoLink}>
                         {c ? (
                           <Image
                             src={c.images.small}
@@ -332,6 +282,7 @@ export default async function Colecao({ searchParams }) {
                           </div>
                         )}
                         <strong>{c?.name ?? i.carta_id}</strong>
+                        </Link>
                         {c && (
                           <span className={base.tileSet}>
                             {c.set ? `${c.set} · ` : ""}#{c.number}

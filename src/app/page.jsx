@@ -105,7 +105,7 @@ export default async function Home() {
     const destaque = cartas[0];
 
     return (
-        <div className={`${styles.page} ${archivo.variable} ${plexMono.variable}`}>
+        <div className={`${styles.page} ${styles.home} ${archivo.variable} ${plexMono.variable}`}>
             <Cabecalho />
 
             <main>
