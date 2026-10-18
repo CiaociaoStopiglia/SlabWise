@@ -1012,6 +1012,11 @@ button.navCta {
     transition: none;
   }
 }
+/* Marca a página inicial: ela fica de fora da centralização abaixo */
+.home {
+  --pagina: home;
+}
+
 /* ---------- CENTRALIZAÇÃO ---------- */
 /* Tudo centralizado, menos a home (.home), que mantém o layout original em duas colunas. */
 .page:not(.home) {
