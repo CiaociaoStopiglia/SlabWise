@@ -82,13 +82,11 @@
   text-decoration: none;
 }
 
-/* Símbolo: um slab visto de frente (etiqueta + janela) */
+/* Símbolo: o mascote do Slabbit (public/logo.svg) */
 .logoMark {
-  width: 18px;
-  height: 24px;
-  border: var(--border);
-  border-radius: 4px;
-  background: linear-gradient(var(--ink) 0 30%, transparent 30%);
+  width: 30px;
+  height: 31px;
+  background: url("/logo.svg") center / contain no-repeat;
 }
 
 .navLinks {
@@ -887,11 +885,6 @@ button.navCta {
 
 .footer .logo {
   color: var(--slab-yellow);
-}
-
-.footer .logoMark {
-  border-color: var(--slab-yellow);
-  background: linear-gradient(var(--slab-yellow) 0 30%, transparent 30%);
 }
 
 .footer p {
