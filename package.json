@@ -30,7 +30,7 @@
         "node": ">=18.17.0"
     },
     "scripts": {
-        "dev": "clear && next dev",
+        "dev": "cls && next dev",
         "lint": "biome check",
         "format": "biome format --write"
     },
