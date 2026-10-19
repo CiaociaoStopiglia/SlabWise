@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/planos", rotulo: "Planos", id: "planos" },
   { href: "/graduar", rotulo: "Vale graduar?", id: "graduar" },
   { href: "/colecao", rotulo: "Minha coleção", id: "colecao" },
+  { href: "/app", rotulo: "App", id: "app" },
 ];
 
 export default async function Cabecalho({ ativo }) {

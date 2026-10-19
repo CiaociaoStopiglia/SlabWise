@@ -9,3 +9,9 @@ body {
     margin: 0;
     padding: 0;
 }
+
+/* Reserva o espaço da barra de rolagem mesmo em página curta.
+   Sem isso, o topo "pula" pro lado ao trocar entre uma página curta e uma longa. */
+html {
+    scrollbar-gutter: stable;
+}
