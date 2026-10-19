@@ -288,37 +288,24 @@ export default async function Colecao({ searchParams }) {
                             {c.set ? `${c.set} · ` : ""}#{c.number}
                           </span>
                         )}
-                        <span className={styles.tag}>
-                          {i.graduacao ?? ESTADOS[i.estado]}
+                        {/* Estado (ou nota PSA) numa etiqueta curta: "NM", "PSA 10" */}
+                        <span className={styles.tag} title={i.graduacao ?? ESTADOS[i.estado]}>
+                          {i.graduacao ?? i.estado}
                         </span>
 
+                        {/* Valor total da linha; o lucro só aparece se a pessoa contou quanto pagou */}
                         <div className={styles.valores}>
                           {unit ? (
-                            <>
-                              <span className={base.tilePrice}>
-                                {formatarReais(unit * i.quantidade)}
-                              </span>
-                              {i.quantidade > 1 && (
-                                <span className={styles.muted}>
-                                  {formatarReais(unit)} cada
-                                </span>
-                              )}
-                            </>
+                            <span className={base.tilePrice}>
+                              {formatarReais(unit * i.quantidade)}
+                            </span>
                           ) : (
-                            <span className={styles.muted}>
-                              Sem preço no momento
-                            </span>
-                          )}
-                          {i.preco_pago !== null && (
-                            <span className={styles.muted}>
-                              Pago: {formatarReais(i.preco_pago)} cada
-                            </span>
+                            <span className={styles.muted}>Sem preço</span>
                           )}
                           {lucro !== null && (
                             <span
-                              className={
-                                lucro >= 0 ? styles.alta : styles.baixa
-                              }
+                              className={lucro >= 0 ? styles.alta : styles.baixa}
+                              title={`Você pagou ${formatarReais(i.preco_pago)} cada`}
                             >
                               {lucro >= 0 ? "▲ +" : "▼ −"}
                               {formatarReais(Math.abs(lucro))}
@@ -326,33 +313,38 @@ export default async function Colecao({ searchParams }) {
                           )}
                         </div>
 
-                        <form
-                          action={atualizarQuantidade}
-                          className={styles.qtd}
-                        >
-                          <input type="hidden" name="id" value={i.id} />
-                          <label>
-                            Qtd.
-                            <input
+                        {/* Rodapé: − quantidade + e o X de remover. Cada botão manda a quantidade nova. */}
+                        <div className={styles.rodape}>
+                          <form action={atualizarQuantidade} className={styles.qtd}>
+                            <input type="hidden" name="id" value={i.id} />
+                            <button
+                              type="submit"
                               name="quantidade"
-                              type="number"
-                              min="1"
-                              max="999"
-                              defaultValue={i.quantidade}
-                            />
-                          </label>
-                          <button type="submit">Atualizar</button>
-                        </form>
-
-                        <div className={styles.acoes}>
-                          <Link
-                            href={`/graduar?carta=${encodeURIComponent(i.carta_id)}`}
-                          >
-                            Vale graduar? →
-                          </Link>
+                              value={i.quantidade - 1}
+                              disabled={i.quantidade <= 1}
+                              aria-label="Tirar uma"
+                            >
+                              −
+                            </button>
+                            <span title="Quantidade">{i.quantidade}×</span>
+                            <button
+                              type="submit"
+                              name="quantidade"
+                              value={i.quantidade + 1}
+                              disabled={i.quantidade >= 999}
+                              aria-label="Adicionar mais uma"
+                            >
+                              +
+                            </button>
+                          </form>
                           <form action={removerCarta}>
                             <input type="hidden" name="id" value={i.id} />
-                            <button type="submit" className={styles.remover}>
+                            <button
+                              type="submit"
+                              className={styles.remover}
+                              aria-label={`Remover ${c?.name ?? "carta"} da coleção`}
+                              title="Remover da coleção"
+                            >
                               Remover
                             </button>
                           </form>

@@ -12,12 +12,16 @@
 // a cada visita.
 
 import dns from "node:dns";
+import { respostaOffline } from "./cartasOffline";
 
 // Muitas redes no Brasil anunciam IPv6 mas não completam a conexão.
 // Isso faz o servidor tentar IPv4 primeiro (o navegador já faz isso sozinho).
 dns.setDefaultResultOrder("ipv4first");
 
 const TCGDEX = "https://api.tcgdex.net/v2/en";
+// CARTAS_OFFLINE=1 no .env.local: usa as cartas de mentira de cartasOffline.js em vez da TCGdex
+// (pra desenvolver em rede que bloqueia sites de Pokémon). O câmbio continua real.
+const OFFLINE = process.env.CARTAS_OFFLINE === "1";
 const TEMPO_LIMITE = 6000; // ms: se a API não responder, a página não fica travada
 const CACHE_CARTAS = 60 * 60 * 6; // 6 horas
 const CACHE_COTACAO = 60 * 60; // 1 hora
@@ -28,6 +32,7 @@ const AMOSTRA_POR_NOME = 10; // quantas versões de cada Pokémon comparar
 const CARTAS_FIXAS = {};
 
 async function getJSON(url, revalidate, headers) {
+  if (OFFLINE && url.startsWith(TCGDEX)) return respostaOffline(url);
   try {
     const res = await fetch(url, {
       headers,
@@ -350,7 +355,7 @@ export async function buscarPorNomes(nomes) {
 }
 
 // Cartas famosas e caras da home. IDs conferidos no banco da TCGdex.
-// A foto aparece sempre; o preço entra quando a API responder.
+// A foto aparece sempre (a do detalhe, ou a daqui se a API falhar); o preço entra quando a API responder.
 const ASSETS = "https://assets.tcgdex.net/en";
 export const CARTAS_EM_DESTAQUE = [
   { id: "swsh7-215", name: "Umbreon VMAX", set: "Evolving Skies", number: "215/203", image: `${ASSETS}/swsh/swsh7/215` },
@@ -376,7 +381,7 @@ export async function buscarCartas() {
         name: detalhe?.name ?? base.name,
         set: detalhe?.set || base.set,
         number: detalhe?.number ?? base.number,
-        images: {
+        images: detalhe?.images ?? {
           small: imagemDaCarta(base.image, "low"),
           large: imagemDaCarta(base.image, "high"),
         },

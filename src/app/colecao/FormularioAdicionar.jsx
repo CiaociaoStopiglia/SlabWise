@@ -5,11 +5,19 @@ import { ESTADOS, GRADUACOES } from "./opcoes";
 import base from "../page.module.css";
 import styles from "./colecao.module.css";
 
-/** aberto: já vem com os campos à mostra. voltar: página pra onde ir depois de salvar. */
+/**
+ * aberto: já vem com os campos à mostra, no meio da página (usado na página da carta).
+ * Fechado (na grade de cartas), os campos abrem num painel por cima do card,
+ * assim os outros cards da linha não esticam junto.
+ * voltar: página pra onde ir depois de salvar.
+ */
 export default function FormularioAdicionar({ carta, aberto = false, voltar = "/colecao" }) {
   return (
-    <details className={styles.add} open={aberto || undefined}>
-      <summary>Adicionar à coleção</summary>
+    <details className={`${styles.add} ${aberto ? "" : styles.addFlutuante}`} open={aberto || undefined}>
+      <summary>
+        <span className={styles.addAbrir}>Adicionar à coleção</span>
+        <span className={styles.addFechar}>Fechar</span>
+      </summary>
       <form action={adicionarCarta} className={styles.addForm}>
         <input type="hidden" name="carta_id" value={carta.id} />
         <input type="hidden" name="voltar" value={voltar} />

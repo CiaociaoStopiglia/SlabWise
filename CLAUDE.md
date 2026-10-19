@@ -55,6 +55,8 @@ Contexto do projeto para o Claude. Visão geral e histórico completo estão no 
 
 - `DATABASE_URL=postgres://slabwise_app:SENHA@localhost:5432/slabwise` (obrigatório para login/conta)
 - `AWESOMEAPI_KEY` (opcional, aumenta o limite de consultas de câmbio)
+- `DB_VIA_HTTPS=1` (opcional, só com banco no Neon): usa `@neondatabase/serverless` pela porta 443 em vez do `pg`, para redes que bloqueiam a 5432
+- `CARTAS_OFFLINE=1` (opcional): troca a TCGdex por cartas de mentira em `src/lib/cartasOffline.js`: ~20 fixas e, pra qualquer outro nome buscado, 3 versões inventadas com id `off-<nome>-<1..3>` (preços inventados, foto desenhada em `/carta-offline/[id]/[arquivo]`), para redes que bloqueiam sites de Pokémon. Câmbio continua real
 
 O banco é criado rodando `src/db/schema.sql` no pgAdmin (Postgres 15+, usa `citext` e `nulls not distinct`). Troque a senha do role `slabwise_app` antes.
 

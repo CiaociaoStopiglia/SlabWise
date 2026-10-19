@@ -177,69 +177,65 @@ p.muted {
   text-transform: uppercase;
 }
 
+/* Preço e lucro ficam sempre no pé do card (margin-top: auto), alinhados entre os cards da linha */
 .valores {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 8px;
-}
-
-/* Quantidade e ações */
-.qtd {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--ink-soft);
-}
-
-.qtd label,
-.addForm label {
-  display: grid;
-  gap: 2px;
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.qtd input {
-  width: 64px;
-}
-
-.qtd button {
-  padding: 6px 12px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  background: transparent;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.qtd button:hover {
-  background: var(--ink);
-  color: var(--slab-yellow);
-}
-
-.acoes {
-  display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+/* Rodapé do card: quantidade com − e +, e o Remover */
+.rodape {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   margin-top: 10px;
-  font-size: 0.85rem;
+  padding-top: 10px;
+  border-top: 1px dashed var(--ink-soft);
+}
+
+.qtd {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.qtd button {
+  width: 30px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
   font-weight: 700;
+  cursor: pointer;
 }
 
-.acoes a {
-  text-decoration: none;
+.qtd button:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--slab-yellow);
 }
 
-.acoes a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.qtd button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.qtd span {
+  min-width: 2.4em;
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .remover {
@@ -248,6 +244,7 @@ p.muted {
   background: none;
   color: var(--down);
   font: inherit;
+  font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -295,7 +292,35 @@ p.muted {
   cursor: pointer;
 }
 
-.qtd input,
+/* Na grade, o formulário abre num painel por cima do card, em vez de esticar a linha toda */
+.addFlutuante {
+  position: relative;
+}
+
+.addFlutuante .addForm {
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  margin-top: 0;
+  padding: 14px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+/* O botão vira "Fechar" quando o painel está aberto */
+.addFechar,
+.addFlutuante[open] .addAbrir {
+  display: none;
+}
+
+.addFlutuante[open] .addFechar {
+  display: inline;
+}
+
 .addForm input,
 .addForm select {
   width: 100%;
@@ -310,9 +335,6 @@ p.muted {
   font-weight: 400;
 }
 
-.qtd input {
-  width: 64px;
-}
 
 /* Estado vazio */
 .state {
@@ -386,9 +408,7 @@ p.muted {
 }
 
 .chips,
-.valores,
-.acoes,
-.qtd {
+.valores {
   align-items: center;
   justify-content: center;
 }
