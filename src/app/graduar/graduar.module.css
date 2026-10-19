@@ -110,42 +110,230 @@ fieldset.step legend + * {
 }
 
 /* Passo 1: carta escolhida */
-.picked {
-  display: flex;
-  gap: 20px;
+/* ---------- Carta escolhida (passo 1) ----------
+   A carta vai num "slab" igual ao da home, levemente torto; ao lado,
+   o nome grande e o preço numa etiqueta preta. */
+.escolhida {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 40px;
   align-items: center;
+  max-width: 780px;
+  margin: 8px auto 0;
+  text-align: left;
+  animation: escolhidaEntra 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
 }
 
-.pickedImg {
-  width: 110px;
-  height: auto;
-  flex-shrink: 0;
-  border-radius: 6px;
+@keyframes escolhidaEntra {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
-.pickedInfo {
+.slabMini {
+  padding: 10px;
+  border: var(--border);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: 8px 8px 0 var(--ink);
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.slabMini:hover {
+  transform: rotate(0deg) translate(-2px, -2px);
+  box-shadow: 10px 10px 0 var(--ink);
+}
+
+.slabEtiqueta {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: flex-start;
-  gap: 6px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 7px 10px;
+  border: var(--border);
+  border-radius: 8px;
+}
+
+.slabEtiqueta > div:first-child {
+  display: grid;
   min-width: 0;
 }
 
-.pickedInfo strong {
+.slabEtiqueta small {
+  overflow: hidden;
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slabEtiqueta strong {
+  overflow: hidden;
   font-family: var(--font-display);
-  font-stretch: 112%;
-  font-weight: 800;
+  font-stretch: 115%;
+  font-weight: 900;
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slabCond {
+  display: grid;
+  justify-items: end;
+  line-height: 1;
+}
+
+.slabCond b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
   font-size: 1.3rem;
 }
 
-.pickedInfo > span:nth-child(2) {
+.slabFoto {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.escolhidaInfo {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.escolhidaKicker {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
-.change {
-  margin-top: 6px;
-  font-weight: 700;
-  text-underline-offset: 3px;
+.escolhidaNome {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.escolhidaMeta {
+  margin: -4px 0 0;
+  color: var(--ink-soft);
+}
+
+/* Etiqueta preta de preço, a mesma ideia do slab da home */
+.precoTag {
+  display: grid;
+  gap: 2px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.precoTag > span:first-child {
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c9c5b4;
+}
+
+.precoTag strong {
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+  color: var(--slab-yellow);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Verde e vermelho mais claros, pra ler bem no fundo preto */
+.precoSobe,
+.precoCai {
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+}
+
+.precoSobe {
+  color: #6fdc9b;
+}
+
+.precoCai {
+  color: #ff9a85;
+}
+
+.semPreco {
+  margin: 0;
+  padding: 10px 14px;
+  border: 2px dashed var(--ink);
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.escolhidaDica {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.escolhidaAcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* Os dois botões com a mesma largura */
+.escolhidaAcoes a {
+  min-width: 190px;
+}
+
+@media (max-width: 640px) {
+  .escolhida {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 28px;
+    text-align: center;
+  }
+
+  .slabMini {
+    width: min(220px, 70%);
+  }
+
+  .escolhidaInfo {
+    justify-items: center;
+  }
+
+  .escolhidaAcoes {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .escolhida {
+    animation: none;
+  }
+
+  .slabMini,
+  .slabMini:hover {
+    transition: none;
+  }
 }
 
 .pickSearch {
@@ -246,6 +434,9 @@ fieldset.step legend + * {
 .field {
   display: grid;
   gap: 6px;
+  /* Sem isso, quando o vizinho da linha tem texto de ajuda, a grade estica
+     o campo e a caixa de valor fica mais alta que as outras */
+  align-content: start;
   min-width: 0;
   margin-bottom: 18px;
 }
@@ -269,23 +460,38 @@ fieldset.step legend + * {
 .money {
   display: flex;
   align-items: center;
+  height: 52px;
   border: var(--border);
   border-radius: 10px;
   background: var(--acrylic);
   overflow: hidden;
+  cursor: text;
+  transition: background-color 0.2s ease;
 }
 
+.money:hover {
+  background: #e6e8e0;
+}
+
+/* "R$" fixo, separado do número por um fio */
 .money span {
-  padding: 0 10px 0 14px;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  padding: 0 12px 0 14px;
+  border-right: 1.5px solid #c9c6b8;
   font-family: var(--font-data);
   font-weight: 600;
+  font-size: 0.9rem;
   color: var(--ink-soft);
 }
 
 .money input {
   flex: 1;
   min-width: 0;
-  padding: 12px 12px 12px 0;
+  height: 100%;
+  padding: 0 14px 0 0;
   border: 0;
   background: transparent;
   font-family: var(--font-data);
@@ -295,12 +501,18 @@ fieldset.step legend + * {
   font-variant-numeric: tabular-nums;
 }
 
+.money input::placeholder {
+  color: #9a978a;
+  font-weight: 400;
+}
+
 .money input:focus {
   outline: none;
 }
 
+/* Em foco a caixa clareia: dá pra ver onde está digitando sem anel em volta */
 .money:focus-within {
-  box-shadow: 0 0 0 3px var(--slab-yellow), 0 0 0 5px var(--ink);
+  background: var(--paper);
 }
 
 .field select {
@@ -543,6 +755,7 @@ fieldset.step legend + * {
   border-radius: 2px;
   background: var(--ink);
   vertical-align: middle;
+  transition: width 0.4s ease; /* a barra cresce/encolhe quando a chance muda */
 }
 
 .tiny {
@@ -638,13 +851,6 @@ fieldset.step legend + * {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .picked {
-    align-items: flex-start;
-  }
-
-  .pickedImg {
-    width: 88px;
-  }
 }
 /* ---------- Centralização ---------- */
 .bandInner {
@@ -665,15 +871,6 @@ fieldset.step legend + * {
 .muted {
   justify-content: center;
   text-align: center;
-}
-
-.picked {
-  flex-direction: column;
-  text-align: center;
-}
-
-.pickedInfo {
-  align-items: center;
 }
 
 .pickSearch {
@@ -703,4 +900,33 @@ fieldset.step legend + * {
 .verdict,
 .tips {
   text-align: left;
+}
+
+/* Salvar simulação (Pro) */
+.salvar {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px dashed var(--ink);
+}
+
+.salvar p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.salvarBotao {
+  width: 100%;
+  min-height: 52px;
+  border: var(--border);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Carta dentro do slab do passo 1, com o efeito holográfico */
+.slabFotoCaixa {
+  --raio-carta: 8px;
 }

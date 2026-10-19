@@ -38,8 +38,9 @@ const planos = [
             {
                 titulo: 'Ferramentas',
                 itens: [
+                    { t: 'Simulador de graduação (PSA)', ok: true },
                     { t: 'Alertas de variação de preço', ok: false },
-                    { t: 'Simulador de graduação (PSA)', ok: false },
+                    { t: 'Salvar e comparar simulações', ok: false },
                 ],
             },
         ],
@@ -70,8 +71,9 @@ const planos = [
             {
                 titulo: 'Ferramentas',
                 itens: [
-                    { t: 'Alertas quando o preço mudar', ok: true },
                     { t: 'Simulador de graduação (PSA)', ok: true },
+                    { t: 'Alertas quando o preço mudar', ok: true },
+                    { t: 'Salvar e comparar simulações', ok: true },
                 ],
             },
         ],
@@ -153,7 +155,7 @@ export default function PricingPlans({ base }) {
                             </div>
 
                             <Link
-                                href="/entrar"
+                                href={pro ? `/assinar?periodo=${anual ? 'anual' : 'mensal'}` : '/entrar'}
                                 className={pro ? base.buttonDark : base.buttonOutline}>
                                 {plano.cta}
                             </Link>

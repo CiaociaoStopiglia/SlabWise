@@ -5,6 +5,7 @@ import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import CartaBrilhante from "../CartaBrilhante";
 
 // Carrossel de cartas (Embla) com microinteração nos cards (Motion).
 export default function CardCarousel({ cartas, styles }) {
@@ -18,8 +19,8 @@ export default function CardCarousel({ cartas, styles }) {
     <div className={styles.carousel}>
       <div className={styles.carouselViewport} ref={ref}>
         <ul className={styles.carouselTrack}>
-          {cartas.map((c) => (
-            <li key={c.id} className={styles.carouselSlide}>
+          {cartas.map((c, i) => (
+            <li key={c.id} className={styles.carouselSlide} style={{ "--i": i }}>
               <motion.div
                 whileHover={{ y: -6 }}
                 whileTap={{ scale: 0.97 }}
@@ -29,14 +30,16 @@ export default function CardCarousel({ cartas, styles }) {
                   href={`/carta/${encodeURIComponent(c.id)}`}
                   className={styles.cardTile}
                 >
-                  <Image
-                    src={c.imagem}
-                    alt={`Carta ${c.name} · ${c.set} ${c.number}`}
-                    width={245}
-                    height={337}
-                    draggable={false}
-                    className={styles.cardTileImage}
-                  />
+                  <CartaBrilhante valor={c.valor} className={styles.cardTileImage}>
+                    <Image
+                      src={c.imagem}
+                      alt={`Carta ${c.name} · ${c.set} ${c.number}`}
+                      width={245}
+                      height={337}
+                      draggable={false}
+                      className={styles.cardTileImage}
+                    />
+                  </CartaBrilhante>
                   <strong>{c.name}</strong>
                   <span className={styles.tileSet}>
                     {c.set} · {c.number}

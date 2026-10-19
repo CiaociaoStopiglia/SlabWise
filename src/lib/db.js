@@ -1,18 +1,23 @@
 // lib/db.js
 // Conexão com o PostgreSQL.
-// Lê o endereço do DATABASE_URL no .env.local, ex.:
-// DATABASE_URL=postgres://slabwise_app:SENHA@localhost:5432/slabwise
+//
+// Dois jeitos de rodar:
+// 1. Com DATABASE_URL no .env.local, usa esse Postgres. Ex.:
+//    DATABASE_URL=postgres://slabwise_app:SENHA@localhost:5432/slabwise
+// 2. Sem DATABASE_URL, em desenvolvimento (npm run dev): sobe um Postgres embutido
+//    (PGlite), sem instalar nada. Os dados ficam na pasta .banco-local, na raiz do
+//    projeto, e as tabelas são criadas sozinhas na primeira vez a partir do schema.sql.
+//    Pra começar do zero, é só apagar a pasta .banco-local.
+import fs from "node:fs/promises";
+import path from "node:path";
 import { Pool as PoolNeon } from "@neondatabase/serverless";
 import { Pool } from "pg";
 
 // Em desenvolvimento o Next recarrega os arquivos a cada mudança.
-// Guardar o pool no globalThis evita abrir conexões novas toda vez.
+// Guardar a conexão no globalThis evita abrir conexões novas toda vez.
 const global = globalThis;
 
 function criarPool() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("[slabbit] Falta o DATABASE_URL no .env.local");
-  }
   // Sem limite, se a rede bloquear o banco a conexão espera pra sempre e a página fica carregando.
   // Com 8 s, a consulta falha e o site mostra uma mensagem de erro.
   const opcoes = { connectionString: process.env.DATABASE_URL, max: 10, connectionTimeoutMillis: 8000 };
@@ -24,12 +29,51 @@ function criarPool() {
   return new Pool(opcoes);
 }
 
-function pool() {
-  if (!global._slabbitPool) global._slabbitPool = criarPool();
+// Banco embutido pra desenvolvimento. Só é carregado quando não tem DATABASE_URL.
+async function criarBancoLocal() {
+  const { PGlite } = await import("@electric-sql/pglite");
+  const { citext } = await import("@electric-sql/pglite/contrib/citext");
+
+  const banco = new PGlite(path.join(process.cwd(), ".banco-local"), { extensions: { citext } });
+
+  // Primeira vez? Cria as tabelas com o schema.sql. A parte do usuário "slabwise_app"
+  // fica de fora: no banco embutido não existe login de outros usuários.
+  const { rows } = await banco.query("select to_regclass('public.usuarios') as existe");
+  if (!rows[0].existe) {
+    let sql = await fs.readFile(path.join(process.cwd(), "src", "db", "schema.sql"), "utf8");
+    const corte = sql.indexOf("-- USUÁRIO DO BANCO PARA O SITE");
+    if (corte !== -1) sql = sql.slice(0, corte);
+    await banco.exec(sql);
+    console.info("[slabbit] banco local criado na pasta .banco-local");
+  }
+
+  // Mesmo formato de resposta do "pg" ({ rows, rowCount }), pro resto do site nem perceber a diferença.
+  return {
+    async query(texto, valores) {
+      const r = await banco.query(texto, valores);
+      return { rows: r.rows, rowCount: r.affectedRows ?? r.rows.length };
+    },
+  };
+}
+
+function conexao() {
+  if (!global._slabbitPool) {
+    if (process.env.DATABASE_URL) {
+      global._slabbitPool = criarPool();
+    } else if (process.env.NODE_ENV !== "production") {
+      global._slabbitPool = criarBancoLocal().catch((erro) => {
+        global._slabbitPool = null; // tenta de novo na próxima consulta
+        throw erro;
+      });
+    } else {
+      throw new Error("[slabbit] Falta o DATABASE_URL nas variáveis de ambiente");
+    }
+  }
   return global._slabbitPool;
 }
 
 /** Roda uma consulta. Sempre passe os valores separados ($1, $2...), nunca dentro do texto. */
-export function query(texto, valores = []) {
-  return pool().query(texto, valores);
+export async function query(texto, valores = []) {
+  const banco = await conexao();
+  return banco.query(texto, valores);
 }

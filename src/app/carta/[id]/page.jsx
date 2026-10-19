@@ -1,16 +1,22 @@
 // app/carta/[id]/page.jsx
-// Página de uma carta (endereço: /carta/base1-4): foto, preço em real e todas as informações.
+// Página de uma carta (endereço: /carta/base1-4): foto, preço em real, histórico, alerta e todas as informações.
 
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Bell } from "lucide-react";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { usuarioAtual } from "../../../lib/auth";
 import { buscarDetalhesDaCarta, cotacaoDoDia, formatarReais } from "../../../lib/tcgdex";
 import Cabecalho from "../../../components/Cabecalho";
+import GraficoHistorico from "../../../components/GraficoHistorico";
+import CampoDinheiro from "../../../components/CampoDinheiro";
+import { escolherPeriodo, historicoDaCarta, registrarPreco } from "../../../lib/historico";
+import { criarAlerta } from "../../alertas/actions";
 import FormularioAdicionar from "../../colecao/FormularioAdicionar";
 import base from "../../page.module.css";
 import styles from "./carta.module.css";
+import CartaBrilhante from "../../../components/CartaBrilhante";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const plexMono = IBM_Plex_Mono({
@@ -62,8 +68,9 @@ function Ficha({ itens }) {
   );
 }
 
-export default async function Carta({ params }) {
+export default async function Carta({ params, searchParams }) {
   const { id: idBruto } = await params;
+  const { periodo: periodoId = "" } = await searchParams;
   const id = decodeURIComponent(idBruto);
 
   const [cotacao, usuario] = await Promise.all([cotacaoDoDia(), usuarioAtual()]);
@@ -72,6 +79,13 @@ export default async function Carta({ params }) {
 
   const caminho = `/carta/${encodeURIComponent(id)}`;
   const temBatalha = carta.ataques.length > 0 || carta.habilidades.length > 0;
+
+  // Histórico: guarda o preço de hoje e lê os dias anteriores. O Grátis vê 30 dias.
+  const pro = usuario?.plano === "pro";
+  if (carta.preco) await registrarPreco(carta.id, carta.preco.valor);
+  const periodo = escolherPeriodo(periodoId);
+  const bloqueado = periodo.pro && !pro;
+  const historico = bloqueado ? [] : await historicoDaCarta(carta.id, periodo.dias);
 
   return (
     <div className={`${base.page} ${archivo.variable} ${plexMono.variable}`}>
@@ -96,14 +110,16 @@ export default async function Carta({ params }) {
         <section className={styles.corpo}>
           <div className={styles.corpoInner}>
             <div className={styles.foto}>
-              <Image
-                src={carta.images.large}
-                alt={`Carta ${carta.name} · ${carta.set} ${carta.number}`}
-                width={600}
-                height={825}
-                priority
-                className={styles.fotoImg}
-              />
+              <CartaBrilhante valor={carta.preco?.valor} className={styles.fotoCarta}>
+                <Image
+                  src={carta.images.large}
+                  alt={`Carta ${carta.name} · ${carta.set} ${carta.number}`}
+                  width={600}
+                  height={825}
+                  priority
+                  className={styles.fotoImg}
+                />
+              </CartaBrilhante>
             </div>
 
             <div className={styles.lado}>
@@ -197,6 +213,108 @@ export default async function Carta({ params }) {
                 </Link>
               </section>
             </div>
+          </div>
+        </section>
+
+        {/* Histórico de preço + alerta */}
+        <section className={styles.infos} id="historico">
+          <div className={styles.extraInner}>
+            <GraficoHistorico
+              titulo="Histórico de preço"
+              descricao="Preço em real, sem graduar. A gente registra um valor por dia."
+              pontos={historico}
+              periodo={periodo.id}
+              linkPeriodo={(p) => `${caminho}?periodo=${p}#historico`}
+              bloqueado={bloqueado}
+              gratis={!pro}
+              idTitulo="historico-titulo"
+            />
+
+            {/* Alerta de preço: à esquerda o que é, à direita o que dá pra fazer */}
+            <section id="alerta" className={styles.alerta} aria-labelledby="alerta-titulo">
+              <div className={styles.alertaInfo}>
+                <span className={styles.alertaIcone} aria-hidden="true">
+                  <Bell size={22} strokeWidth={2.4} />
+                </span>
+                <div>
+                  <p className={styles.alertaSelo}>
+                    Alerta de preço <span>PRO</span>
+                  </p>
+                  <h2 id="alerta-titulo" className={styles.alertaTitulo}>
+                    Avisa quando mexer
+                  </h2>
+                  <p className={styles.alertaTexto}>
+                    Escolha um preço-alvo. Quando {carta.name} cruzar esse valor em real, você recebe um e-mail no
+                    mesmo dia.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.alertaAcao}>
+                {pro ? (
+                  <form action={criarAlerta} className={styles.alertaForm}>
+                    <input type="hidden" name="carta_id" value={carta.id} />
+                    <input type="hidden" name="voltar" value={caminho} />
+                    <fieldset className={styles.direcoes}>
+                      <legend>Me avise quando o preço</legend>
+                      <label>
+                        <input type="radio" name="direcao" value="abaixo" defaultChecked />
+                        <span>cair abaixo de</span>
+                      </label>
+                      <label>
+                        <input type="radio" name="direcao" value="acima" />
+                        <span>subir acima de</span>
+                      </label>
+                    </fieldset>
+                    <label htmlFor="preco_alvo" className={styles.alvoRotulo}>
+                      Preço-alvo
+                    </label>
+                    <div className={styles.alvo}>
+                      <span aria-hidden="true">R$</span>
+                      <CampoDinheiro
+                        id="preco_alvo"
+                        name="preco_alvo"
+                        required
+                        placeholder={carta.preco ? formatarReais(carta.preco.valor).replace("R$", "").trim() : "1.000"}
+                      />
+                    </div>
+                    {carta.preco && (
+                      <p className={styles.alvoHoje}>Hoje ela vale {formatarReais(carta.preco.valor)}.</p>
+                    )}
+                    <button type="submit" className={base.buttonDark}>
+                      Criar alerta
+                    </button>
+                    <Link href="/alertas" className={styles.link}>
+                      Ver meus alertas →
+                    </Link>
+                  </form>
+                ) : (
+                  <>
+                    {/* Exemplo de como fica o alerta, pra pessoa entender antes de assinar */}
+                    <div className={styles.alertaExemplo} aria-hidden="true">
+                      <span className={styles.alertaExemploSelo}>EXEMPLO</span>
+                      <strong>{carta.name}</strong>
+                      <span>
+                        Quando cair abaixo de{" "}
+                        <b>{carta.preco ? formatarReais(Math.round((carta.preco.valor * 0.9) / 10) * 10) : "R$ 1.000"}</b>
+                      </span>
+                    </div>
+                    {usuario ? (
+                      <Link href="/assinar" className={base.buttonDark}>
+                        Assinar o Pro
+                      </Link>
+                    ) : (
+                      <Link href={`/entrar?voltar=${encodeURIComponent(caminho)}`} className={base.buttonDark}>
+                        Entrar para criar alerta
+                      </Link>
+                    )}
+                    <p className={styles.alertaNota}>
+                      {usuario ? "Alertas fazem parte do Pro: R$ 9,90/mês ou R$ 99/ano." : "Alertas são do plano Pro."}
+                    </p>
+                  </>
+                )}
+              </div>
+            </section>
           </div>
         </section>
 

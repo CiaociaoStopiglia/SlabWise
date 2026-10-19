@@ -1,13 +1,16 @@
 // app/precos/page.jsx
 // Página de busca de cartas (endereço: /precos?q=...)
 
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import { Bell } from "lucide-react";
 import { pesquisarCartas, formatarReais } from "../../lib/tcgdex";
 import Cabecalho from "../../components/Cabecalho";
 import base from "../page.module.css"; // cores, rodapé e tiles da home
 import styles from "./precos.module.css";
+import CartaBrilhante from "../../components/CartaBrilhante";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const plexMono = IBM_Plex_Mono({
@@ -50,13 +53,6 @@ export default async function Busca({ searchParams }) {
 
   // Quantas cartas mostrar: 24 de início, +24 a cada "Ver mais" ou todas.
   const limite = Math.min(500, Math.max(24, Number.parseInt(limiteParam, 10) || 24));
-  const { cartas, total, erro } = termo
-    ? await pesquisarCartas(termo, limite)
-    : { cartas: [], total: 0, erro: false };
-
-  const ordenadas = [...cartas].sort(ORDENS[ordemAtual].ordenar);
-  const link = (o) => `/precos?q=${encodeURIComponent(termo)}&ordem=${o}&limite=${limite}`;
-  const linkLimite = (n) => `/precos?q=${encodeURIComponent(termo)}&ordem=${ordemAtual}&limite=${n}`;
 
   return (
     <div className={`${base.page} ${archivo.variable} ${plexMono.variable}`}>
@@ -90,136 +86,11 @@ export default async function Busca({ searchParams }) {
           </div>
         </section>
 
-        <section className={styles.results}>
-          <div className={styles.resultsInner}>
-            {/* Sem busca ainda */}
-            {!termo && (
-              <div className={styles.state}>
-                <h2>Qual carta você quer avaliar?</h2>
-                <p>Digite o nome acima ou comece por uma das mais procuradas:</p>
-                <ul className={styles.chips}>
-                  {sugestoes.map((s) => (
-                    <li key={s}>
-                      <Link href={`/precos?q=${encodeURIComponent(s)}`}>{s}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* API fora do ar */}
-            {termo && erro && (
-              <div className={`${styles.state} ${styles.stateError}`}>
-                <h2>Não conseguimos consultar as cartas agora</h2>
-                <p>A base de preços não respondeu. Tente de novo em alguns segundos.</p>
-                <Link href={`/precos?q=${encodeURIComponent(termo)}`} className={base.buttonDark}>
-                  Tentar de novo
-                </Link>
-              </div>
-            )}
-
-            {/* Nada encontrado */}
-            {termo && !erro && total === 0 && (
-              <div className={styles.state}>
-                <h2>Nenhuma carta encontrada para “{termo}”</h2>
-                <p>
-                  Confira a grafia e tente o nome em inglês (ex.: “Charizard”, “Umbreon”). Se colocou o número, tente
-                  buscar só pelo nome.
-                </p>
-                <ul className={styles.chips}>
-                  {sugestoes.map((s) => (
-                    <li key={s}>
-                      <Link href={`/precos?q=${encodeURIComponent(s)}`}>{s}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Resultados */}
-            {termo && !erro && total > 0 && (
-              <>
-                <div className={styles.toolbar}>
-                  <p className={styles.count}>
-                    {total > cartas.length
-                      ? `Mostrando ${cartas.length} de ${total} cartas`
-                      : `${total} ${total === 1 ? "carta encontrada" : "cartas encontradas"}`}
-                  </p>
-                  <nav className={styles.sort} aria-label="Ordenar resultados">
-                    <span>Ordenar:</span>
-                    {Object.entries(ORDENS).map(([chave, { rotulo }]) => (
-                      <Link
-                        key={chave}
-                        href={link(chave)}
-                        className={chave === ordemAtual ? styles.sortActive : undefined}
-                        aria-current={chave === ordemAtual ? "true" : undefined}
-                      >
-                        {rotulo}
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
-
-                <ul className={base.cardStrip}>
-                  {ordenadas.map((c) => (
-                    <li key={c.id}>
-                      <article className={`${base.cardTile} ${styles.tile}`}>
-                        <Link href={`/carta/${encodeURIComponent(c.id)}`} className={styles.fotoLink}>
-                          <Image
-                            src={c.images.small}
-                            alt={`Carta ${c.name}${c.set ? ` · ${c.set}` : ""} ${c.number}`}
-                            width={245}
-                            height={337}
-                            className={base.cardTileImage}
-                          />
-                          <strong>{c.name}</strong>
-                        </Link>
-                        <span className={base.tileSet}>
-                          {c.set ? `${c.set} · ` : ""}#{c.number}
-                        </span>
-                        {c.rarity && <span className={styles.rarity}>{c.rarity}</span>}
-                        <div className={styles.priceRow}>
-                          {c.preco ? (
-                            <>
-                              <span className={base.tilePrice}>{formatarReais(c.preco.valor)}</span>
-                              <Variacao valor={c.preco.variacao30} />
-                            </>
-                          ) : (
-                            <span className={styles.noPrice}>Sem preço no momento</span>
-                          )}
-                        </div>
-                        <Link href={`/graduar?carta=${encodeURIComponent(c.id)}`} className={styles.simLink}>
-                          Vale graduar? →
-                        </Link>
-                      </article>
-                    </li>
-                  ))}
-                </ul>
-
-                {total > cartas.length && (
-                  <div className={styles.more}>
-                    <p>
-                      Mostrando {cartas.length} de {total} cartas.
-                    </p>
-                    <div className={styles.moreButtons}>
-                      <Link href={linkLimite(limite + 24)} scroll={false} className={base.buttonOutline}>
-                        Ver mais 24
-                      </Link>
-                      <Link href={linkLimite(total)} scroll={false} className={base.buttonDark}>
-                        Ver todas as {total}
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
-                <p className={base.sourceNote}>
-                  Preço de carta sem graduar em estado Near Mint, com dados da TCGplayer e da Cardmarket (via TCGdex),
-                  convertidos pela cotação do dia. Não é recomendação de investimento.
-                </p>
-              </>
-            )}
-          </div>
-        </section>
+        {/* A faixa de busca aparece na hora; os resultados chegam depois, com um esqueleto no lugar.
+            A key faz o esqueleto voltar só numa busca nova. Ordenar e "Ver mais" mantêm a lista na tela. */}
+        <Suspense key={termo} fallback={<SkeletonResultados />}>
+          <Resultados termo={termo} ordemAtual={ordemAtual} limite={limite} />
+        </Suspense>
       </main>
 
       <footer className={base.footer}>
@@ -235,5 +106,188 @@ export default async function Busca({ searchParams }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+// Resultados da busca. Fica separado da página pra faixa de busca aparecer
+// antes, enquanto a TCGdex responde.
+async function Resultados({ termo, ordemAtual, limite }) {
+  const { cartas, total, erro } = termo
+    ? await pesquisarCartas(termo, limite)
+    : { cartas: [], total: 0, erro: false };
+
+  const ordenadas = [...cartas].sort(ORDENS[ordemAtual].ordenar);
+  const link = (o) => `/precos?q=${encodeURIComponent(termo)}&ordem=${o}&limite=${limite}`;
+  const linkLimite = (n) => `/precos?q=${encodeURIComponent(termo)}&ordem=${ordemAtual}&limite=${n}`;
+
+  return (
+    <section className={styles.results}>
+      <div className={styles.resultsInner}>
+        {/* Sem busca ainda */}
+        {!termo && (
+          <div className={`${styles.state} ${styles.entra}`}>
+            <h2>Qual carta você quer avaliar?</h2>
+            <p>Digite o nome acima ou comece por uma das mais procuradas:</p>
+            <ul className={styles.chips}>
+              {sugestoes.map((s) => (
+                <li key={s}>
+                  <Link href={`/precos?q=${encodeURIComponent(s)}`}>{s}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* API fora do ar */}
+        {termo && erro && (
+          <div className={`${styles.state} ${styles.stateError} ${styles.entra}`}>
+            <h2>Não conseguimos consultar as cartas agora</h2>
+            <p>A base de preços não respondeu. Tente de novo em alguns segundos.</p>
+            <Link href={`/precos?q=${encodeURIComponent(termo)}`} className={base.buttonDark}>
+              Tentar de novo
+            </Link>
+          </div>
+        )}
+
+        {/* Nada encontrado */}
+        {termo && !erro && total === 0 && (
+          <div className={`${styles.state} ${styles.entra}`}>
+            <h2>Nenhuma carta encontrada para “{termo}”</h2>
+            <p>
+              Confira a grafia e tente o nome em inglês (ex.: “Charizard”, “Umbreon”). Se colocou o número, tente
+              buscar só pelo nome.
+            </p>
+            <ul className={styles.chips}>
+              {sugestoes.map((s) => (
+                <li key={s}>
+                  <Link href={`/precos?q=${encodeURIComponent(s)}`}>{s}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Resultados */}
+        {termo && !erro && total > 0 && (
+          <>
+            <div className={`${styles.toolbar} ${styles.entra}`}>
+              <p className={styles.count}>
+                {total > cartas.length
+                  ? `Mostrando ${cartas.length} de ${total} cartas`
+                  : `${total} ${total === 1 ? "carta encontrada" : "cartas encontradas"}`}
+              </p>
+              <nav className={styles.sort} aria-label="Ordenar resultados">
+                <span>Ordenar:</span>
+                {Object.entries(ORDENS).map(([chave, { rotulo }]) => (
+                  <Link
+                    key={chave}
+                    href={link(chave)}
+                    className={chave === ordemAtual ? styles.sortActive : undefined}
+                    aria-current={chave === ordemAtual ? "true" : undefined}
+                  >
+                    {rotulo}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            <ul className={base.cardStrip}>
+              {ordenadas.map((c, i) => (
+                <li key={c.id} className={styles.entra} style={{ "--i": i }}>
+                  <article className={`${base.cardTile} ${styles.tile}`}>
+                    <Link href={`/carta/${encodeURIComponent(c.id)}`} className={styles.fotoLink}>
+                      <CartaBrilhante valor={c.preco?.valor} className={base.cardTileImage}>
+                        <Image
+                          src={c.images.small}
+                          alt={`Carta ${c.name}${c.set ? ` · ${c.set}` : ""} ${c.number}`}
+                          width={245}
+                          height={337}
+                          className={base.cardTileImage}
+                        />
+                      </CartaBrilhante>
+                      <strong>{c.name}</strong>
+                    </Link>
+                    <span className={base.tileSet}>
+                      {c.set ? `${c.set} · ` : ""}#{c.number}
+                    </span>
+                    {c.rarity && <span className={styles.rarity}>{c.rarity}</span>}
+                    <div className={styles.priceRow}>
+                      {c.preco ? (
+                        <>
+                          <span className={base.tilePrice}>{formatarReais(c.preco.valor)}</span>
+                          <Variacao valor={c.preco.variacao30} />
+                        </>
+                      ) : (
+                        <span className={styles.noPrice}>Sem preço no momento</span>
+                      )}
+                    </div>
+                    {/* Rodapé do card: simulador + sino que leva pro alerta na página da carta */}
+                    <div className={styles.tileAcoes}>
+                      <Link href={`/graduar?carta=${encodeURIComponent(c.id)}`} className={styles.simLink}>
+                        Vale graduar? →
+                      </Link>
+                      <Link
+                        href={`/carta/${encodeURIComponent(c.id)}#alerta`}
+                        className={styles.alertaLink}
+                        aria-label={`Criar alerta de preço para ${c.name}`}
+                        title="Criar alerta de preço"
+                      >
+                        <Bell size={18} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </article>
+                </li>
+              ))}
+            </ul>
+
+            {total > cartas.length && (
+              <div className={styles.more}>
+                <p>
+                  Mostrando {cartas.length} de {total} cartas.
+                </p>
+                <div className={styles.moreButtons}>
+                  <Link href={linkLimite(limite + 24)} scroll={false} className={base.buttonOutline}>
+                    Ver mais 24
+                  </Link>
+                  <Link href={linkLimite(total)} scroll={false} className={base.buttonDark}>
+                    Ver todas as {total}
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            <p className={base.sourceNote}>
+              Preço de carta sem graduar em estado Near Mint, com dados da TCGplayer e da Cardmarket (via TCGdex),
+              convertidos pela cotação do dia. Não é recomendação de investimento.
+            </p>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// Esqueleto enquanto a busca carrega: mesmo formato dos cards.
+function SkeletonResultados() {
+  return (
+    <section className={styles.results} aria-busy="true">
+      <div className={styles.resultsInner}>
+        <p className={base.srOnly} role="status">
+          Buscando as cartas…
+        </p>
+        <ul className={base.cardStrip} aria-hidden="true">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+            <li key={n}>
+              <div className={`${base.cardTile} ${base.skeletonTile}`}>
+                <span className={base.skeletonFoto} />
+                <span className={base.skeletonLinha} />
+                <span className={`${base.skeletonLinha} ${base.skeletonCurta}`} />
+                <span className={base.skeletonPreco} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }

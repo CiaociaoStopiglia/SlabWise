@@ -254,87 +254,218 @@ p.muted {
   text-underline-offset: 3px;
 }
 
-/* Formulário de adicionar */
-.add {
+/* ---------- Adicionar à coleção ----------
+   Na grade, o botão abre uma janela no centro da tela (<dialog>).
+   Na página da carta, os mesmos campos aparecem direto. */
+.addBotao {
+  width: 100%;
+  min-height: 44px;
   margin-top: auto;
-  padding-top: 10px;
-}
-
-.add summary {
-  padding: 8px 12px;
+  padding: 0 12px;
   border: 1.5px solid var(--ink);
   border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
   font-size: 0.85rem;
   font-weight: 700;
-  text-align: center;
   cursor: pointer;
-  list-style: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.add summary::-webkit-details-marker {
-  display: none;
-}
-
-.add summary:hover,
-.add[open] summary {
+.addBotao:hover {
   background: var(--ink);
   color: var(--slab-yellow);
 }
 
-.addForm {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.addForm button {
-  padding: 10px 16px;
-  cursor: pointer;
-}
-
-/* Na grade, o formulário abre num painel por cima do card, em vez de esticar a linha toda */
-.addFlutuante {
-  position: relative;
-}
-
-.addFlutuante .addForm {
-  position: absolute;
-  left: -8px;
-  right: -8px;
-  bottom: calc(100% + 8px);
-  z-index: 5;
-  margin-top: 0;
-  padding: 14px;
+.addJanela {
+  /* O reset do Tailwind zera a margem de todos os elementos, e era essa
+     margem automática que centralizava o <dialog>. Aqui ela volta. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(520px, calc(100vw - 32px));
+  height: fit-content;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: auto;
   border: var(--border);
   border-radius: var(--radius);
   background: var(--paper);
-  box-shadow: 6px 6px 0 var(--ink);
+  color: var(--ink);
+  box-shadow: 10px 10px 0 var(--ink);
+  text-align: left;
 }
 
-/* O botão vira "Fechar" quando o painel está aberto */
-.addFechar,
-.addFlutuante[open] .addAbrir {
-  display: none;
+.addJanela[open] {
+  animation: janelaAbre 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.addFlutuante[open] .addFechar {
-  display: inline;
+.addJanela::backdrop {
+  background: rgb(21 20 15 / 0.55);
+  animation: fundoAparece 0.25s ease;
 }
 
-.addForm input,
-.addForm select {
+@keyframes janelaAbre {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+@keyframes fundoAparece {
+  from {
+    opacity: 0;
+  }
+}
+
+.addForm {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  text-align: left;
+}
+
+.addJanela .addForm {
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Carta no topo da janela, pra pessoa ver o que está adicionando */
+.addTopo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 2px dashed var(--ink);
+}
+
+.addFoto {
+  flex: none;
+  width: 64px;
+  height: auto;
+  border-radius: 6px;
+}
+
+.addKicker {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.addTitulo {
+  margin: 2px 0;
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  font-weight: 900;
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.addMeta {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.addCampos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.addCampo {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.addCampo label {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.addCampo input,
+.addCampo select,
+.addDinheiro {
   width: 100%;
   min-width: 0;
-  padding: 7px 10px;
-  border: 1.5px solid var(--ink);
-  border-radius: 8px;
-  background: #fff;
+  height: 48px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: var(--border);
+  border-radius: 10px;
+  background: var(--acrylic);
   color: var(--ink);
   font: inherit;
-  font-size: 0.9rem;
-  font-weight: 400;
+  font-size: 0.95rem;
 }
 
+.addCampo input:focus,
+.addCampo select:focus,
+.addDinheiro:focus-within {
+  outline: none;
+  background: var(--paper);
+}
+
+/* "R$" fixo na frente do valor pago */
+.addDinheiro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addDinheiro span {
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.addDinheiro input {
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.addDica {
+  margin: -6px 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+/* Cancelar e Salvar com o mesmo tamanho */
+.addAcoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.addForm button[type="submit"],
+.addAcoes button {
+  min-height: 52px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .addCampos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .addJanela[open],
+  .addJanela::backdrop {
+    animation: none;
+  }
+}
 
 /* Estado vazio */
 .state {
@@ -438,4 +569,512 @@ p.muted {
 .fotoLink:hover strong {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* Blocos dentro da área logada (sem faixa de largura total) */
+.bloco {
+  display: grid;
+  gap: 16px;
+}
+
+/* Confirmação de remover carta (usa a mesma janela do "Adicionar à coleção") */
+.removerTexto {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.botaoPerigo {
+  border-color: var(--down);
+  background: var(--down);
+  color: #fff !important;
+}
+
+.botaoPerigo:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =====================================================================
+   MINHA COLEÇÃO
+   topo (título + Adicionar) · painel (valor + gráfico) · suas cartas
+   ===================================================================== */
+
+.botaoAdicionar,
+.botaoAdicionarGrande {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.botaoAdicionarGrande {
+  padding: 16px 28px;
+  font-size: 1.05rem;
+}
+
+/* ---------- Painel: quanto vale (esquerda) + gráfico (direita) ---------- */
+.painel {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(0, 1.6fr);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 var(--ink);
+  overflow: hidden;
+  text-align: left;
+}
+
+.painelNumeros {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 24px;
+  border-right: var(--border);
+  background: var(--slab-yellow);
+}
+
+.painelKicker {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3e3a2e;
+}
+
+.painelValor {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  font-weight: 900;
+  font-size: clamp(2.1rem, 4.5vw, 2.9rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.painelResultado {
+  margin: 4px 0 0;
+  font-family: var(--font-data);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.painelResultado span {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: #3e3a2e;
+}
+
+.painelDica {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #3e3a2e;
+}
+
+.painelLista {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 2px dashed var(--ink);
+}
+
+.painelLista > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.painelLista dt {
+  font-size: 0.9rem;
+  color: #3e3a2e;
+}
+
+.painelLista dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-weight: 600;
+}
+
+.painelLista small {
+  font-weight: 400;
+  color: #3e3a2e;
+}
+
+.painelLimite .resumoBarra {
+  flex-basis: 100%;
+}
+
+.painelNota {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: #3e3a2e;
+}
+
+.painelGrafico {
+  min-width: 0;
+  padding: 20px 24px 22px;
+}
+
+.resumoBarra {
+  height: 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.resumoBarra i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+}
+
+@media (max-width: 820px) {
+  .painel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .painelNumeros {
+    border-right: 0;
+    border-bottom: var(--border);
+  }
+}
+
+/* ---------- Suas cartas ---------- */
+.barraCartas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.barraCartas .h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.contagem {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Ordenação: pílulas, a escolhida fica preta */
+.ordem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ordem a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ordem a:hover {
+  background: var(--acrylic);
+}
+
+.ordem a[aria-current="true"] {
+  background: var(--ink);
+  color: var(--slab-yellow) !important;
+}
+
+.notaFonte {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  text-align: left;
+}
+
+/* ---------- Coleção vazia: convite pra começar ---------- */
+.vazia {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding: 36px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--slab-yellow);
+  box-shadow: 8px 8px 0 var(--ink);
+  text-align: left;
+}
+
+.vazia h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 120%;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  text-transform: uppercase;
+}
+
+.vazia > p {
+  max-width: 52ch;
+  margin: 0;
+  color: #3e3a2e;
+}
+
+.vaziaAtalhos {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.vaziaAtalhos .chips {
+  justify-content: flex-start;
+}
+
+/* ---------- Janela "Adicionar carta" (busca → detalhes) ---------- */
+.janelaBusca {
+  width: min(600px, calc(100vw - 32px));
+}
+
+.janelaTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 0 24px;
+}
+
+.janelaTitulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  font-weight: 900;
+  font-size: 1.3rem;
+}
+
+.janelaVoltar,
+.janelaFechar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.janelaVoltar {
+  margin-left: -12px;
+}
+
+.janelaFechar {
+  width: 44px;
+  justify-content: center;
+  padding: 0;
+}
+
+.janelaVoltar:hover,
+.janelaFechar:hover {
+  background: var(--acrylic);
+}
+
+.passoBusca {
+  display: grid;
+  gap: 14px;
+  padding: 16px 24px 24px;
+}
+
+.campoBusca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 14px;
+  border: var(--border);
+  border-radius: 12px;
+  background: var(--acrylic);
+}
+
+.campoBusca:focus-within {
+  background: var(--paper);
+}
+
+.campoBusca input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.campoBusca input:focus {
+  outline: none;
+}
+
+.resultados {
+  display: grid;
+  gap: 8px;
+  min-height: 120px;
+}
+
+.resultadosAviso,
+.resultadosConta {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.resultadosConta {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.listaResultados {
+  display: grid;
+  gap: 6px;
+  max-height: min(52vh, 420px);
+  margin: 0;
+  padding: 0 4px 4px 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+/* Cada resultado é um botão: clicar escolhe a carta */
+.resultado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px 8px 8px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.resultado:hover,
+.resultado:focus-visible {
+  border-color: var(--ink);
+  background: var(--acrylic);
+}
+
+.resultadoFoto {
+  flex: none;
+  width: 40px;
+  height: auto;
+  aspect-ratio: 245 / 337;
+  border-radius: 3px;
+  background: var(--acrylic);
+}
+
+.resultadoInfo {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.resultadoInfo strong {
+  overflow: hidden;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resultadoInfo small {
+  overflow: hidden;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resultadoPreco {
+  flex: none;
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Linhas cinza piscando enquanto busca */
+.resultadoEsqueleto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+}
+
+.resultadoEsqueleto span {
+  display: block;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e2e3dc 25%, #f1f2ec 50%, #e2e3dc 75%);
+  background-size: 200% 100%;
+  animation: brilhoBusca 1.4s ease-in-out infinite;
+}
+
+.resultadoEsqueleto span:first-child {
+  width: 40px;
+  height: 55px;
+}
+
+.resultadoEsqueleto span:last-child {
+  flex: 1;
+  height: 14px;
+}
+
+@keyframes brilhoBusca {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.passoDetalhes {
+  animation: passoEntra 0.25s ease;
+}
+
+@keyframes passoEntra {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resultadoEsqueleto span,
+  .passoDetalhes {
+    animation: none;
+  }
 }

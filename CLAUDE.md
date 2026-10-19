@@ -23,13 +23,21 @@ Contexto do projeto para o Claude. Visão geral e histórico completo estão no 
 - `src/app/graduar/`: simulador "Vale graduar?" (`page.jsx` servidor, `Calculadora.jsx` cliente, `psa.js` com níveis/preços/checklist/chances)
 - `src/app/carta/[id]/`: página de cada carta (`/carta/base1-4`): foto, preço por versão, Cardmarket, ficha, ataques, botão de adicionar à coleção (usa `colecao/FormularioAdicionar.jsx`)
 - `src/app/planos/`: planos Grátis e Pro
-- `src/app/colecao/`: Minha coleção (exige login; busca, adicionar, quantidade, remover; Server Actions em `actions.js`, listas de estado/graduação em `opcoes.js`)
+- Área logada (exige login, moldura com menu lateral em `src/components/area/AreaLogada.jsx`):
+  - `src/app/colecao/`: Minha coleção (busca, adicionar, quantidade, remover, evolução do valor; Server Actions em `actions.js`, listas de estado/graduação em `opcoes.js`)
+  - `src/app/alertas/`: alertas de preço (Pro); o alerta é criado na página da carta
+  - `src/app/simulacoes/`: simulações salvas (Pro); o botão de salvar fica no simulador
+  - `src/app/assinatura/`: plano e cobrança
+  - `src/app/conta/`: nome, senha e excluir conta
+- `src/app/assinar/`: checkout do Pro (mensal/anual, Pix/cartão); o gateway ainda não está ligado
 - `src/app/entrar/`: login/cadastro (`actions.js` são Server Actions)
-- `src/components/Cabecalho.jsx`: topo comum a todas as páginas (mostra Entrar ou nome + Sair)
+- `src/components/Cabecalho.jsx`: topo comum a todas as páginas (mostra Entrar ou o botão Minha área; dentro da área, nome + Sair)
+- `src/components/GraficoHistorico.jsx`: gráfico de linha em SVG (histórico da carta e valor da coleção); período por `?periodo=30d|6m|1a|tudo`, Grátis só vê 30 dias
+- `src/lib/historico.js`: grava e lê `historico_precos` e `valor_colecao` (uma foto por dia, quando a página é aberta)
 - `src/components/home/`: componentes de animação/UI (Reveal, CountUp, TiltStage, CardCarousel, PricingPlans, HeroEntrance, SmoothScroll)
 - `src/lib/tcgdex.js`: dados de cartas (TCGdex) e câmbio (AwesomeAPI → ExchangeRate-API → cotação reserva)
 - `src/lib/db.js`: pool do Postgres; `src/lib/auth.js`: sessões e senhas
-- `src/db/schema.sql`: schema completo do banco
+- `src/db/schema.sql`: schema completo do banco; `src/db/migracoes/`: scripts pra atualizar um banco já criado
 
 ## Convenções
 
@@ -53,17 +61,20 @@ Contexto do projeto para o Claude. Visão geral e histórico completo estão no 
 
 `.env.local` (não versionado):
 
-- `DATABASE_URL=postgres://slabwise_app:SENHA@localhost:5432/slabwise` (obrigatório para login/conta)
+- `DATABASE_URL=postgres://slabwise_app:SENHA@localhost:5432/slabwise` (opcional em desenvolvimento: sem ele, o `npm run dev` sobe um Postgres embutido, o PGlite, na pasta `.banco-local`, e cria as tabelas sozinho pelo `schema.sql`; apagar a pasta zera o banco. Em produção é obrigatório)
 - `AWESOMEAPI_KEY` (opcional, aumenta o limite de consultas de câmbio)
 - `DB_VIA_HTTPS=1` (opcional, só com banco no Neon): usa `@neondatabase/serverless` pela porta 443 em vez do `pg`, para redes que bloqueiam a 5432
+- Em desenvolvimento, a página `/conta` tem a caixa "Modo desenvolvimento" (só com `NODE_ENV=development`): virar Pro/Grátis e criar histórico de teste, sem pagamento.
 - `CARTAS_OFFLINE=1` (opcional): troca a TCGdex por cartas de mentira em `src/lib/cartasOffline.js`: ~20 fixas e, pra qualquer outro nome buscado, 3 versões inventadas com id `off-<nome>-<1..3>` (preços inventados, foto desenhada em `/carta-offline/[id]/[arquivo]`), para redes que bloqueiam sites de Pokémon. Câmbio continua real
 
 O banco é criado rodando `src/db/schema.sql` no pgAdmin (Postgres 15+, usa `citext` e `nulls not distinct`). Troque a senha do role `slabwise_app` antes.
 
 ## Pendências conhecidas
 
-- Salvar simulações (`simulacoes`) e recuperação de senha (`recuperacoes_senha`) têm tabela, mas não têm tela/ação.
-- Pagamento do plano Pro não está implementado (`plano`/`pro_ate` só existem no banco).
+- Recuperação de senha (`recuperacoes_senha`) tem tabela, mas não tem tela/ação nem envio de e-mail.
+- Pagamento do plano Pro não está implementado: `/assinar` só escolhe período e forma de pagamento; falta o gateway em `src/app/assinar/actions.js` e o webhook que grava `plano`/`pro_ate`.
+- Alertas são criados e listados, mas ninguém dispara ainda: falta o job que compara preços e manda e-mail.
+- Plano: simulador de graduação é grátis; salvar simulações é Pro.
 - `package.json` ainda tem autores, descrição e homepage do template Codeverse.
 - `src/components/Nome-do-componente.*` é resto do template.
 - Chances de nota do simulador são estimativas, não dados reais de população PSA.

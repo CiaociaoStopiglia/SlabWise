@@ -11,15 +11,16 @@ O problema que resolve: os preços das cartas estão em dólar ou euro, e quem c
 | Home | `/` | Apresentação, cartas em destaque com preço em real, carrossel, planos |
 | Preços | `/precos?q=charizard` | Pesquisa por nome, preço em R$, variação em 30 dias, ordenação por maior/menor preço ou nome |
 | Vale graduar? | `/graduar` | Simulador: escolha a carta, marque o estado (centralização, cantos, bordas, superfície) e veja custo total, chance de cada nota (PSA 10/9/8/7-) e o veredito |
-| Carta | `/carta/base1-4` | Página de cada carta: foto grande, preço em R$ por versão (TCGplayer e Cardmarket), HP, tipo, ataques, fraqueza, ilustrador, e botão para adicionar à coleção |
+| Carta | `/carta/base1-4` | Página de cada carta: foto grande, preço em R$ por versão (TCGplayer e Cardmarket), histórico de preço, alerta de preço (Pro), HP, tipo, ataques, fraqueza, ilustrador, e botão para adicionar à coleção |
 | Planos | `/planos` | Grátis x Pro, alternância mensal/anual, tabela comparativa |
-| Minha coleção | `/colecao` | Só logado: valor total em R$, resultado (lucro/prejuízo), busca para adicionar carta (quantidade, estado, graduação, quanto pagou), editar quantidade e remover |
+| Assinar | `/assinar` | Escolha de período (mensal/anual) e forma de pagamento (Pix/cartão); o gateway ainda não está ligado |
+| Minha área | `/colecao`, `/alertas`, `/simulacoes`, `/assinatura`, `/conta` | Só logado, com menu lateral. Coleção: valor total em R$, resultado, evolução do valor, adicionar, editar quantidade e remover. Alertas e simulações salvas (Pro). Plano e cobrança. Conta: nome, senha e excluir conta |
 | Entrar | `/entrar` | Cadastro e login |
 
 ### Planos
 
-- **Grátis**: ver preços, simulador e até 100 cartas na coleção.
-- **Pro**: alertas, simulações salvas e coleção sem limite.
+- **Grátis**: ver preços, histórico de 30 dias, simulador de graduação e até 100 cartas na coleção.
+- **Pro**: histórico completo, alertas, salvar simulações e coleção sem limite.
 
 ## O que a gente fez
 
@@ -32,7 +33,8 @@ O problema que resolve: os preços das cartas estão em dólar ou euro, e quem c
 7. **Banco de dados** (PostgreSQL, `src/db/schema.sql`): tabelas `usuarios`, `sessoes`, `recuperacoes_senha`, `colecao` e `simulacoes`; trigger que limita o plano Grátis a 100 cartas; usuário de banco sem privilégio de superusuário para o site.
 8. **Contas e login** (`src/lib/auth.js`, `src/app/entrar/`): cadastro e login com senha em bcrypt, sessão por cookie `httpOnly` (no banco só vai o hash do token), mensagem de erro igual para e-mail inexistente e senha errada, redirecionamento seguro após entrar.
 9. **Minha coleção** (`src/app/colecao/`): soma o valor atual das cartas em reais, calcula resultado quando você informa quanto pagou, soma a quantidade se a mesma carta (mesmo estado e graduação) for adicionada de novo, e respeita o limite de 100 cartas do plano Grátis.
-10. **Cabeçalho único** para todas as páginas, que mostra "Entrar" ou "Olá, Nome" com selo PRO e botão Sair.
+10. **Cabeçalho único** para todas as páginas, que mostra "Entrar" ou o botão "Minha área" (com selo PRO).
+11. **Área logada** (`src/components/area/`): menu lateral com coleção, alertas, simulações, plano e conta. Histórico de preço da carta e evolução do valor da coleção (`src/lib/historico.js`, gráfico em `src/components/GraficoHistorico.jsx`), gravados uma vez por dia quando a página é aberta. Alertas de preço criados na página da carta. Botão "Salvar simulação" no simulador (Pro). Tela de assinatura (`/assinar`), ainda sem gateway.
 
 ## Stack
 
@@ -69,21 +71,33 @@ src/
     page.jsx            home
     busca/              busca de cartas
     graduar/            simulador (Calculadora.jsx, psa.js)
+    colecao/            área logada: coleção
+    alertas/            área logada: alertas de preço (Pro)
+    simulacoes/         área logada: simulações salvas (Pro)
+    assinatura/         área logada: plano e cobrança
+    conta/              área logada: nome, senha, excluir conta
+    assinar/            checkout do Pro
     precos/             planos
     entrar/             login e cadastro (Server Actions)
   components/
     Cabecalho.jsx
+    GraficoHistorico.jsx gráfico de linha (carta e coleção)
+    area/               moldura da área logada (menu lateral)
     home/               componentes de animação e planos
   lib/
     tcgdex.js           cartas e câmbio
     db.js               conexão Postgres
     auth.js             senhas e sessões
+    historico.js        histórico de preço e do valor da coleção
   db/schema.sql
+  db/migracoes/         scripts pra atualizar um banco já criado
 ```
 
 ## Próximos passos
 
-- Salvar simulações e recuperar senha (tabelas prontas, falta a interface).
-- Cobrança do plano Pro e alertas de preço.
+- Recuperar senha (tabela pronta, falta a interface e o envio de e-mail).
+- Ligar um gateway de pagamento em `src/app/assinar/actions.js` (Pix/cartão) e gravar `plano`/`pro_ate` pelo webhook.
+- Disparar os alertas: um job diário que compara o preço com `alertas.preco_alvo`, manda o e-mail e preenche `disparado_em`.
+- O histórico só registra quando alguém abre a carta ou a coleção; um job diário deixaria a linha sem buracos.
 - Trocar descrição, autores e homepage do template Codeverse em `package.json`, e remover `Nome-do-componente`.
 - Calibrar as chances de nota com dados reais de população da PSA.

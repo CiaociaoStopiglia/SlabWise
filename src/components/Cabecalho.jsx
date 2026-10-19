@@ -1,6 +1,7 @@
 // components/Cabecalho.jsx
 // Topo do site, igual em todas as páginas.
-// Mostra "Entrar" pra visitante e o nome + "Sair" pra quem tá logado.
+// Visitante vê "Entrar". Quem tá logado vê o botão "Minha área" (coleção, alertas, conta...).
+// Dentro da área logada (naArea), o botão vira "Olá, nome" + "Sair".
 import Link from "next/link";
 import { usuarioAtual } from "../lib/auth";
 import { sair } from "../app/entrar/actions";
@@ -10,11 +11,17 @@ const LINKS = [
   { href: "/precos", rotulo: "Preços", id: "precos" },
   { href: "/planos", rotulo: "Planos", id: "planos" },
   { href: "/graduar", rotulo: "Vale graduar?", id: "graduar" },
-  { href: "/colecao", rotulo: "Minha coleção", id: "colecao" },
   { href: "/app", rotulo: "App", id: "app" },
 ];
 
-export default async function Cabecalho({ ativo }) {
+// "João Pedro" → "JP"; "Ana" → "AN"
+export function iniciais(nome = "") {
+  const partes = nome.trim().split(/\s+/).filter(Boolean);
+  const letras = partes.length > 1 ? partes[0][0] + partes[partes.length - 1][0] : (partes[0] ?? "").slice(0, 2);
+  return letras.toUpperCase();
+}
+
+export default async function Cabecalho({ ativo, naArea = false }) {
   const usuario = await usuarioAtual();
   const primeiroNome = usuario?.nome.split(" ")[0];
 
@@ -34,7 +41,7 @@ export default async function Cabecalho({ ativo }) {
           ))}
         </nav>
 
-        {usuario ? (
+        {usuario && naArea && (
           <div className={base.navUser}>
             <span className={base.navHello}>
               Olá, <strong>{primeiroNome}</strong>
@@ -46,7 +53,19 @@ export default async function Cabecalho({ ativo }) {
               </button>
             </form>
           </div>
-        ) : (
+        )}
+
+        {usuario && !naArea && (
+          <Link href="/colecao" className={`${base.navCta} ${base.navArea}`}>
+            <span className={base.navAvatar} aria-hidden="true">
+              {iniciais(usuario.nome)}
+            </span>
+            Minha área
+            {usuario.plano === "pro" && <span className={base.navPro}>PRO</span>}
+          </Link>
+        )}
+
+        {!usuario && (
           <Link href="/entrar" className={base.navCta}>
             Entrar
           </Link>
