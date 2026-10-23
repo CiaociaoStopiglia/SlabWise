@@ -5,8 +5,19 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { query } from "../../lib/db";
-import { encerrarSessao, hashSenha, usuarioAtual, verificarSenha } from "../../lib/auth";
+import {
+  encerrarSessao,
+  hashSenha,
+  usuarioAtual,
+  verificarSenha,
+} from "../../lib/auth";
 import { TOTAL_POKEMONS } from "../../lib/pokeapi";
+import {
+  TAMANHO_MAXIMO,
+  TIPOS_ACEITOS,
+  cloudinaryLigado,
+  enviarImagem,
+} from "../../lib/cloudinary";
 
 function voltar(aviso, tipo = "ok") {
   redirect(`/conta?${tipo}=${encodeURIComponent(aviso)}`);
@@ -19,16 +30,23 @@ async function exigirLogin() {
 }
 
 async function senhaConfere(usuarioId, senha) {
-  const { rows } = await query("select senha_hash from usuarios where id = $1", [usuarioId]);
+  const { rows } = await query(
+    "select senha_hash from usuarios where id = $1",
+    [usuarioId],
+  );
   return verificarSenha(senha, rows[0]?.senha_hash);
 }
 
 export async function atualizarNome(formData) {
   const usuario = await exigirLogin();
   const nome = String(formData.get("nome") ?? "").trim();
-  if (!nome || nome.length > 80) voltar("O nome precisa ter de 1 a 80 letras.", "erro");
+  if (!nome || nome.length > 80)
+    voltar("O nome precisa ter de 1 a 80 letras.", "erro");
   try {
-    await query("update usuarios set nome = $2 where id = $1", [usuario.id, nome]);
+    await query("update usuarios set nome = $2 where id = $1", [
+      usuario.id,
+      nome,
+    ]);
   } catch (erro) {
     console.error("[slabbit] erro ao mudar o nome:", erro.message);
     voltar("Não conseguimos salvar agora. Tente de novo.", "erro");
@@ -43,13 +61,19 @@ export async function alterarSenha(formData) {
   const nova = String(formData.get("senha_nova") ?? "");
   const repetida = String(formData.get("senha_repetida") ?? "");
 
-  if (nova.length < 8) voltar("A senha nova precisa ter pelo menos 8 caracteres.", "erro");
-  if (Buffer.byteLength(nova) > 72) voltar("A senha nova pode ter no máximo 72 caracteres.", "erro");
+  if (nova.length < 8)
+    voltar("A senha nova precisa ter pelo menos 8 caracteres.", "erro");
+  if (Buffer.byteLength(nova) > 72)
+    voltar("A senha nova pode ter no máximo 72 caracteres.", "erro");
   if (nova !== repetida) voltar("As duas senhas novas não são iguais.", "erro");
 
   try {
-    if (!(await senhaConfere(usuario.id, atual))) voltar("A senha atual não confere.", "erro");
-    await query("update usuarios set senha_hash = $2 where id = $1", [usuario.id, await hashSenha(nova)]);
+    if (!(await senhaConfere(usuario.id, atual)))
+      voltar("A senha atual não confere.", "erro");
+    await query("update usuarios set senha_hash = $2 where id = $1", [
+      usuario.id,
+      await hashSenha(nova),
+    ]);
   } catch (erro) {
     if (erro?.digest?.startsWith?.("NEXT_REDIRECT")) throw erro;
     console.error("[slabbit] erro ao trocar a senha:", erro.message);
@@ -62,7 +86,8 @@ export async function excluirConta(formData) {
   const usuario = await exigirLogin();
   const senha = String(formData.get("senha") ?? "");
   try {
-    if (!(await senhaConfere(usuario.id, senha))) voltar("Senha incorreta. A conta não foi excluída.", "erro");
+    if (!(await senhaConfere(usuario.id, senha)))
+      voltar("Senha incorreta. A conta não foi excluída.", "erro");
     // "on delete cascade" no banco apaga junto sessões, coleção, alertas e simulações.
     await query("delete from usuarios where id = $1", [usuario.id]);
   } catch (erro) {
@@ -92,7 +117,11 @@ export async function mudarPlanoDev(formData) {
     [usuario.id, plano],
   );
   revalidatePath("/", "layout");
-  voltar(plano === "pro" ? "Pronto: sua conta virou Pro por 30 dias." : "Pronto: sua conta voltou pro Grátis.");
+  voltar(
+    plano === "pro"
+      ? "Pronto: sua conta virou Pro por 30 dias."
+      : "Pronto: sua conta voltou pro Grátis.",
+  );
 }
 
 export async function gerarHistoricoDev() {
@@ -119,7 +148,9 @@ export async function gerarHistoricoDev() {
     [usuario.id],
   );
   revalidatePath("/", "layout");
-  voltar("Histórico de teste criado: veja na coleção e na página das suas cartas.");
+  voltar(
+    "Histórico de teste criado: veja na coleção e na página das suas cartas.",
+  );
 }
 
 export async function salvarPokemonFavorito(formData) {
@@ -127,15 +158,61 @@ export async function salvarPokemonFavorito(formData) {
   const texto = String(formData.get("pokemon") ?? "");
   // Vazio = tirar o favorito
   const id = texto === "" ? null : Number(texto);
-  if (id !== null && !(Number.isInteger(id) && id >= 1 && id <= TOTAL_POKEMONS)) {
+  if (
+    id !== null &&
+    !(Number.isInteger(id) && id >= 1 && id <= TOTAL_POKEMONS)
+  ) {
     voltar("Escolha um Pokémon da lista.", "erro");
   }
   try {
-    await query("update usuarios set pokemon_favorito = $2 where id = $1", [usuario.id, id]);
+    await query("update usuarios set pokemon_favorito = $2 where id = $1", [
+      usuario.id,
+      id,
+    ]);
   } catch (erro) {
     console.error("[slabbit] erro ao salvar o Pokémon favorito:", erro.message);
     voltar("Não conseguimos salvar agora. Tente de novo.", "erro");
   }
   revalidatePath("/", "layout");
   voltar(id ? "Pokémon favorito salvo." : "Pokémon favorito removido.");
+}
+
+// Foto de perfil e banner: o formulário manda "tipo" (avatar ou banner) e o "arquivo".
+// "remover" volta pro padrão (Pokémon favorito / banner liso).
+export async function salvarImagemPerfil(formData) {
+  const usuario = await exigirLogin();
+  const tipo = formData.get("tipo") === "banner" ? "banner" : "avatar";
+  const coluna = tipo === "banner" ? "banner_url" : "foto_url";
+
+  let endereco = null;
+  if (formData.get("remover") === "1") {
+    // fica null mesmo: tira a imagem
+  } else {
+    if (!cloudinaryLigado())
+      voltar("O envio de imagens ainda não está configurado.", "erro");
+    const arquivo = formData.get("arquivo");
+    if (!arquivo || typeof arquivo === "string" || arquivo.size === 0)
+      voltar("Escolha uma imagem.", "erro");
+    if (!TIPOS_ACEITOS.includes(arquivo.type))
+      voltar("Use uma imagem JPG, PNG, WebP ou GIF.", "erro");
+    if (arquivo.size > TAMANHO_MAXIMO)
+      voltar("A imagem pode ter no máximo 5 MB.", "erro");
+
+    endereco = await enviarImagem(arquivo, usuario.id, tipo);
+    if (!endereco)
+      voltar("Não conseguimos enviar a imagem agora. Tente de novo.", "erro");
+  }
+
+  try {
+    // coluna vem de uma lista fixa acima, nunca do formulário
+    await query(`update usuarios set ${coluna} = $2 where id = $1`, [
+      usuario.id,
+      endereco,
+    ]);
+  } catch (erro) {
+    console.error("[slabbit] erro ao salvar a imagem do perfil:", erro.message);
+    voltar("Não conseguimos salvar agora. Tente de novo.", "erro");
+  }
+  revalidatePath("/", "layout");
+  voltar(endereco ? "Imagem atualizada." : "Imagem removida.");
 }

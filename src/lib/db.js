@@ -51,6 +51,8 @@ async function criarBancoLocal() {
   await banco.exec(
     "alter table usuarios add column if not exists pokemon_favorito smallint check (pokemon_favorito between 1 and 1025)",
   );
+  // E as fotos do perfil (migração 003).
+  await banco.exec("alter table usuarios add column if not exists foto_url text, add column if not exists banner_url text");
 
   // Mesmo formato de resposta do "pg" ({ rows, rowCount }), pro resto do site nem perceber a diferença.
   return {

@@ -20,7 +20,9 @@ export default function PokemonFavorito({ pokemons, atual, acao }) {
 
   const termo = busca.trim().toLowerCase();
   const filtrados = termo
-    ? pokemons.filter((p) => p.nome.toLowerCase().includes(termo) || String(p.id) === termo)
+    ? pokemons.filter(
+        (p) => p.nome.toLowerCase().includes(termo) || String(p.id) === termo,
+      )
     : pokemons;
   const nomeEscolhido = pokemons.find((p) => p.id === escolhido)?.nome;
 
@@ -70,7 +72,13 @@ export default function PokemonFavorito({ pokemons, atual, acao }) {
                 aria-pressed={p.id === escolhido}
                 onClick={() => setEscolhido(p.id)}
               >
-                <img src={foto(p.id)} alt="" width={96} height={96} loading="lazy" />
+                <img
+                  src={foto(p.id)}
+                  alt=""
+                  width={96}
+                  height={96}
+                  loading="lazy"
+                />
                 <span>{p.nome}</span>
               </button>
             </li>
@@ -80,7 +88,11 @@ export default function PokemonFavorito({ pokemons, atual, acao }) {
 
       {filtrados.length > limite && (
         <div className={area.botoes}>
-          <button type="button" className={base.buttonOutline} onClick={() => setLimite(limite + POR_PAGINA)}>
+          <button
+            type="button"
+            className={base.buttonOutline}
+            onClick={() => setLimite(limite + POR_PAGINA)}
+          >
             Mostrar mais
           </button>
         </div>
@@ -91,7 +103,11 @@ export default function PokemonFavorito({ pokemons, atual, acao }) {
           Salvar favorito
         </button>
         {escolhido && (
-          <button type="button" className={base.buttonOutline} onClick={() => setEscolhido(null)}>
+          <button
+            type="button"
+            className={base.buttonOutline}
+            onClick={() => setEscolhido(null)}
+          >
             Tirar favorito
           </button>
         )}

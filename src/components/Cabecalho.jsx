@@ -56,7 +56,7 @@ export default async function Cabecalho({ ativo, naArea = false }) {
         )}
 
         {usuario && !naArea && (
-          <Link href="/colecao" className={`${base.navCta} ${base.navArea}`}>
+          <Link href="/conta" className={`${base.navCta} ${base.navArea}`}>
             <span className={base.navAvatar} aria-hidden="true">
               {iniciais(usuario.nome)}
             </span>

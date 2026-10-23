@@ -5,8 +5,7 @@
 import Link from "next/link";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { Bell, Calculator, CreditCard, LayoutGrid, UserRound } from "lucide-react";
-import Cabecalho, { iniciais } from "../Cabecalho";
-import { fotoPokemon } from "../../lib/pokeapi";
+import Cabecalho from "../Cabecalho";
 import base from "../../app/page.module.css";
 import styles from "./area.module.css";
 
@@ -19,19 +18,20 @@ const plexMono = IBM_Plex_Mono({
 });
 
 const SECOES = [
+  { id: "conta", href: "/conta", rotulo: "Perfil", Icone: UserRound },
   { id: "colecao", href: "/colecao", rotulo: "Minha coleção", Icone: LayoutGrid },
   { id: "alertas", href: "/alertas", rotulo: "Alertas", Icone: Bell, pro: true },
   { id: "simulacoes", href: "/simulacoes", rotulo: "Simulações", Icone: Calculator, pro: true },
   { id: "assinatura", href: "/assinatura", rotulo: "Plano e cobrança", Icone: CreditCard },
-  { id: "conta", href: "/conta", rotulo: "Conta", Icone: UserRound },
-];
+  ];
 
 /**
  * usuario: { nome, plano } · ativo: id da seção atual
+ * cheia: sem margem nem título, pro conteúdo ir de ponta a ponta (perfil)
  * titulo: título grande da página · acoes: botões ao lado do título (opcional)
  * (os avisos das ações aparecem como toast: components/AvisoToast.jsx)
  */
-export default function AreaLogada({ usuario, ativo, titulo, acoes, children }) {
+export default function AreaLogada({ usuario, ativo, titulo, acoes, cheia, children }) {
   const pro = usuario.plano === "pro";
 
   return (
@@ -39,46 +39,32 @@ export default function AreaLogada({ usuario, ativo, titulo, acoes, children }) 
       <Cabecalho naArea />
 
       <div className={styles.area}>
+        {/* Barra fina só com ícones; o nome da seção aparece ao passar o mouse */}
         <aside className={styles.lateral} aria-label="Minha área">
-          <div className={styles.perfil}>
-            <span className={styles.avatar} aria-hidden="true">
-              {usuario.pokemon_favorito ? (
-                <img src={fotoPokemon(usuario.pokemon_favorito)} alt="" width={46} height={46} />
-              ) : (
-                iniciais(usuario.nome)
-              )}
-            </span>
-            <div>
-              <strong>{usuario.nome}</strong>
-              <span className={pro ? styles.seloPro : styles.selo}>{pro ? "PRO" : "GRÁTIS"}</span>
-            </div>
-          </div>
-
           <nav className={styles.menu} aria-label="Seções da sua área">
             {SECOES.map(({ id, href, rotulo, Icone, pro: soPro }) => (
-              <Link key={id} href={href} aria-current={ativo === id ? "page" : undefined} className={styles.item}>
-                <Icone size={20} aria-hidden="true" />
-                <span>{rotulo}</span>
+              <Link
+                key={id}
+                href={href}
+                aria-current={ativo === id ? "page" : undefined}
+                aria-label={rotulo}
+                title={soPro && !pro ? `${rotulo} (Pro)` : rotulo}
+                className={styles.item}
+              >
+                <Icone size={22} aria-hidden="true" />
                 {soPro && !pro && <small className={styles.tagPro}>PRO</small>}
               </Link>
             ))}
           </nav>
-
-          {!pro && (
-            <div className={styles.upsell}>
-              <strong>Quer alertas e histórico completo?</strong>
-              <Link href="/assinar" className={base.buttonDark}>
-                Assinar o Pro
-              </Link>
-            </div>
-          )}
         </aside>
 
-        <main className={styles.conteudo}>
-          <div className={styles.cabeca}>
-            <h1 className={styles.titulo}>{titulo}</h1>
-            {acoes}
-          </div>
+        <main className={`${styles.conteudo} ${cheia ? styles.conteudoCheio : ""}`}>
+          {titulo && (
+            <div className={styles.cabeca}>
+              <h1 className={styles.titulo}>{titulo}</h1>
+              {acoes}
+            </div>
+          )}
 
           {children}
         </main>

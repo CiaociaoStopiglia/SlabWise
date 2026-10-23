@@ -4,115 +4,54 @@
   flex: 1 0 auto; /* estica e deixa o rodapé no fim da tela */
   width: 100%;
   box-sizing: border-box;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 32px var(--gutter-r) 80px var(--gutter);
   /* O site centraliza o texto das páginas (page.module.css); na área logada,
      com formulários e menu, tudo fica alinhado à esquerda. */
   text-align: left;
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 32px;
+  align-items: stretch;
 }
 
+/* Barra de ícones colada na esquerda, da altura toda */
 .lateral {
-  flex: 1 1 240px;
-  max-width: 100%;
-  display: grid;
-  gap: 16px;
+  flex: 0 0 60px;
+  box-sizing: border-box;
+  padding: 12px 0;
+  border-right: var(--border);
+  background: #f5f5f5;
 }
 
 .conteudo {
-  flex: 999 1 600px;
+  flex: 1 1 0;
   min-width: 0;
   display: grid;
+  align-content: start;
   gap: 32px;
+  padding: 32px var(--gutter-r) 80px 32px;
+  background: #fff;
 }
 
-/* Quem tá logado */
-.perfil {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border: var(--border);
-  border-radius: var(--radius);
-  background: var(--paper);
+/* Perfil: o banner vai de ponta a ponta, sem moldura */
+.conteudoCheio {
+  gap: 0;
+  padding: 0 0 48px;
 }
 
-.perfil > div {
+/* Menu: só ícones, um embaixo do outro */
+.menu {
   display: grid;
-  gap: 4px;
-  min-width: 0;
+  justify-items: center;
+  gap: 6px;
 }
 
-.perfil strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.avatar {
-  display: inline-flex;
-  flex: none;
+.item {
+  position: relative;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: var(--ink);
-  color: var(--slab-yellow);
-  font-weight: 800;
-  overflow: hidden;
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: var(--slab-yellow);
-}
-
-.selo,
-.seloPro {
-  justify-self: start;
-  padding: 1px 6px;
-  border: 1.5px solid var(--ink);
-  border-radius: 4px;
-  font-family: var(--font-data);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-
-.seloPro {
-  background: var(--slab-yellow);
-}
-
-/* Menu */
-.menu {
-  display: grid;
-  gap: 4px;
-  padding: 8px;
-  border: var(--border);
-  border-radius: var(--radius);
-  background: var(--paper);
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 14px;
-  border-radius: 10px;
-  font-weight: 700;
   text-decoration: none;
-}
-
-.item span {
-  flex: 1;
 }
 
 .item:hover {
@@ -125,21 +64,38 @@
 }
 
 .tagPro {
-  padding: 0 5px;
-  border: 1.5px solid currentColor;
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  padding: 0 4px;
   border-radius: 4px;
+  background: var(--slab-yellow);
+  color: var(--ink);
   font-family: var(--font-data);
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
+  font-size: 0.58rem;
+  font-weight: 600;
 }
 
-.upsell {
-  display: grid;
-  gap: 12px;
-  padding: 16px;
-  border: var(--border);
-  border-radius: var(--radius);
-  background: var(--slab-yellow);
+@media (max-width: 700px) {
+  .area {
+    flex-direction: column;
+  }
+
+  .lateral {
+    flex-basis: auto;
+    padding: 6px;
+    border-right: 0;
+    border-bottom: var(--border);
+  }
+
+  .menu {
+    grid-auto-flow: column;
+    justify-content: space-around;
+  }
+
+  .conteudo {
+    padding-left: 16px;
+  }
 }
 
 /* Título da seção */
