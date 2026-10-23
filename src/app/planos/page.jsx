@@ -24,7 +24,7 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata = {
     title: 'Planos | Slabbit',
-    description: 'Ver o preço da carta é grátis. O Pro libera alertas, simulador de graduação e coleção sem limite.',
+    description: 'Ver o preço da carta e simular a graduação é grátis. O Pro libera alertas, histórico completo, simulações salvas e coleção sem limite.',
 };
 
 const garantias = [
@@ -65,7 +65,8 @@ const comparativo = [
         grupo: 'Ferramentas',
         linhas: [
             { recurso: 'Alertas de variação de preço', gratis: false, pro: true },
-            { recurso: 'Simulador de graduação (PSA)', gratis: false, pro: true },
+            { recurso: 'Simulador de graduação (PSA)', gratis: true, pro: true },
+            { recurso: 'Salvar e comparar simulações', gratis: false, pro: true },
         ],
     },
 ];
@@ -115,8 +116,8 @@ export default function Precos() {
                         </h1>
                         <p className={styles.lead}>
                             Sem pegadinha: o plano Grátis resolve o básico pra sempre. O Pro é pra
-                            quem coleciona sério e quer alertas, coleção sem limite e simulador de
-                            graduação.
+                            quem coleciona sério e quer alertas, coleção sem limite, histórico
+                            completo e simulações salvas.
                         </p>
                     </HeroEntrance>
                 </section>
@@ -192,8 +193,8 @@ export default function Precos() {
                                 <span className={styles.showIcon}>
                                     <Calculator size={20} aria-hidden="true" />
                                 </span>
-                                <h3>Simulador de graduação</h3>
-                                <p>Taxa, frete e imposto em real pra saber se compensa mandar.</p>
+                                <h3>Simulações salvas</h3>
+                                <p>O simulador é grátis. No Pro, cada simulação fica guardada pra você comparar antes de montar o lote.</p>
                                 <div className={styles.mock}>
                                     <div className={styles.mockRow}>
                                         <span>Valor em PSA 10</span>

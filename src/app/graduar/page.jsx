@@ -6,9 +6,12 @@ import Image from "next/image";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { buscarCartaPorId, cotacaoDoDia, formatarReais, pesquisarCartas } from "../../lib/tcgdex";
 import Calculadora from "./Calculadora";
+import { usuarioAtual } from "../../lib/auth";
+import { salvarSimulacao } from "../simulacoes/actions";
 import Cabecalho from "../../components/Cabecalho";
 import base from "../page.module.css";
 import styles from "./graduar.module.css";
+import CartaBrilhante from "../../components/CartaBrilhante";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const plexMono = IBM_Plex_Mono({
@@ -27,7 +30,8 @@ export default async function Graduar({ searchParams }) {
   const { carta: id = "", q = "" } = await searchParams;
   const termo = q.trim();
 
-  const cotacao = await cotacaoDoDia();
+  const [cotacao, usuario] = await Promise.all([cotacaoDoDia(), usuarioAtual()]);
+  const quemSalva = !usuario ? "visitante" : usuario.plano === "pro" ? "pro" : "gratis";
   const carta = id ? await buscarCartaPorId(id, cotacao) : null;
   const busca = !carta && termo ? await pesquisarCartas(termo) : null;
 
@@ -56,27 +60,69 @@ export default async function Graduar({ searchParams }) {
               </h2>
 
               {carta ? (
-                <div className={styles.picked}>
-                  <Image
-                    src={carta.images.small}
-                    alt={`Carta ${carta.name} · ${carta.set} ${carta.number}`}
-                    width={245}
-                    height={337}
-                    className={styles.pickedImg}
-                  />
-                  <div className={styles.pickedInfo}>
-                    <strong>{carta.name}</strong>
-                    <span>
+                // Carta escolhida em destaque: dentro de um "slab" de etiqueta, como na home,
+                // com o preço de hoje numa etiqueta preta ao lado.
+                <div className={styles.escolhida}>
+                  <div className={styles.slabMini}>
+                    <div className={styles.slabEtiqueta}>
+                      <div>
+                        <small>{carta.set?.toUpperCase()}</small>
+                        <strong>{carta.name.toUpperCase()}</strong>
+                        <small>#{carta.number}</small>
+                      </div>
+                      <div className={styles.slabCond}>
+                        <small>COND.</small>
+                        <b>NM</b>
+                      </div>
+                    </div>
+                    <CartaBrilhante valor={carta.preco?.valor} inclinar={false} className={styles.slabFotoCaixa}>
+                      <Image
+                        src={carta.images.small}
+                        alt={`Carta ${carta.name} · ${carta.set} ${carta.number}`}
+                        width={245}
+                        height={337}
+                        className={styles.slabFoto}
+                      />
+                    </CartaBrilhante>
+                  </div>
+
+                  <div className={styles.escolhidaInfo}>
+                    <p className={styles.escolhidaKicker}>Carta escolhida</p>
+                    <h3 className={styles.escolhidaNome}>{carta.name}</h3>
+                    <p className={styles.escolhidaMeta}>
                       {carta.set} · #{carta.number}
-                    </span>
+                      {carta.rarity ? ` · ${carta.rarity}` : ""}
+                    </p>
+
                     {carta.preco ? (
-                      <span className={base.tilePrice}>{formatarReais(carta.preco.valor)} sem graduar</span>
+                      <div className={styles.precoTag}>
+                        <span>Preço hoje · sem graduar · NM</span>
+                        <strong>{formatarReais(carta.preco.valor)}</strong>
+                        {Number.isFinite(carta.preco.variacao30) && (
+                          <span className={carta.preco.variacao30 >= 0 ? styles.precoSobe : styles.precoCai}>
+                            {carta.preco.variacao30 >= 0 ? "▲" : "▼"} {Math.abs(carta.preco.variacao30).toFixed(0)}% vs.
+                            média de 30 dias
+                          </span>
+                        )}
+                      </div>
                     ) : (
-                      <span className={styles.muted}>Sem preço no momento: preencha abaixo.</span>
+                      <p className={styles.semPreco}>Sem preço na base agora. Preencha os valores no passo 2.</p>
                     )}
-                    <Link href="/graduar" className={styles.change}>
-                      Trocar carta
-                    </Link>
+
+                    <p className={styles.escolhidaDica}>
+                      {carta.preco
+                        ? "Já colocamos esse preço no passo 2. Se a sua carta não estiver quase nova, ajuste lá."
+                        : "Use vendas recentes no eBay ou na Liga como referência."}
+                    </p>
+
+                    <div className={styles.escolhidaAcoes}>
+                      <Link href="/graduar" className={base.buttonOutline}>
+                        Trocar carta
+                      </Link>
+                      <Link href={`/carta/${encodeURIComponent(carta.id)}`} className={base.buttonOutline}>
+                        Ver página da carta
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -139,7 +185,9 @@ export default async function Graduar({ searchParams }) {
             {/* PASSOS 2 a 4 + resultado */}
             <Calculadora
               key={carta?.id ?? "exemplo"}
-              carta={carta ? { id: carta.id, preco: carta.preco?.valor ?? null } : null}
+              carta={carta ? { id: carta.id, nome: carta.name, preco: carta.preco?.valor ?? null } : null}
+              quemSalva={quemSalva}
+              acaoSalvar={salvarSimulacao}
               cotacaoUsd={cotacao.usd}
               cotacaoFonte={cotacao.fonte}
             />

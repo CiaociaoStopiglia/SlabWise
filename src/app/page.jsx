@@ -1,6 +1,7 @@
 // app/page.jsx
 // Home do Slabbit (endereço: /)
 
+import { Suspense, cache } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { buscarCartas, cotacaoDoDia, formatarReais } from '../lib/tcgdex';
@@ -12,6 +13,8 @@ import TiltStage from '../components/home/TiltStage';
 import Reveal from '../components/home/Reveal';
 import CardCarousel from '../components/home/CardCarousel';
 import CountUp from '../components/home/CountUp';
+import PricingPlans from '../components/home/PricingPlans';
+import CartaBrilhante from '../components/CartaBrilhante';
 
 // Os preços ficam em cache por 6 horas (dentro do lib/tcgdex.js).
 // A página em si é gerada a cada visita, porque o topo muda se a pessoa tá logada.
@@ -69,40 +72,180 @@ const simulacao = [
     { item: 'Imposto de importação', valor: '− R$ 95' },
 ];
 
-const planos = [
-    {
-        nome: 'Grátis',
-        preco: 'R$ 0',
-        nota: 'pra sempre',
-        itens: [
-            'Busca de preço sem limite',
-            'Preço em real',
-            'Histórico de 30 dias',
-            'Coleção com até 100 cartas',
-        ],
-        cta: 'Começar grátis',
-        destaque: false,
-    },
-    {
-        nome: 'Pro',
-        preco: 'R$ 9,90',
-        nota: 'por mês',
-        itens: [
-            'Tudo do Grátis',
-            'Alertas quando o preço mudar',
-            'Coleção sem limite',
-            'Simulador de graduação',
-            'Histórico completo',
-        ],
-        cta: 'Assinar o Pro',
-        destaque: true,
-    },
-];
+// As cartas da home vêm da TCGdex e podem demorar. Buscamos uma vez só por visita
+// (o cache do React divide o resultado entre o slab do topo e o carrossel)
+// e cada parte aparece sozinha quando os dados chegam, sem travar a página inteira.
+const dadosDaHome = cache(() => Promise.all([buscarCartas(), cotacaoDoDia()]));
 
-export default async function Home() {
-    const [cartas, cotacao] = await Promise.all([buscarCartas(), cotacaoDoDia()]);
-    // A carta mais valiosa da lista vai pro slab do topo.
-    const destaque = cartas[0];
+// Slab do topo: a carta mais valiosa da lista. Sem carta, mostra a de exemplo.
+function ConteudoSlab({ destaque }) {
+    return (
+        <>
+        <div className={styles.slab}>
+            {destaque ? (
+                <div className={styles.slabLabel}>
+                    <div className={styles.labelInfo}>
+                        <span className={styles.labelSet}>
+                            {destaque.set.toUpperCase()}
+                        </span>
+                        <strong>{destaque.name.toUpperCase()}</strong>
+                        <span className={styles.cert}>#{destaque.number}</span>
+                    </div>
+                    {/* Sem nota: o preço é da carta sem graduar, em estado Near Mint */}
+                    <div className={styles.grade}>
+                        <small>COND.</small>
+                        <b className={styles.gradeCond}>NM</b>
+                    </div>
+                </div>
+            ) : (
+                <div className={styles.slabLabel}>
+                    <div className={styles.labelInfo}>
+                        <span>2026 · CARTA EXEMPLO</span>
+                        <strong>HOLO RARA #025</strong>
+                        <span className={styles.cert}>CERT 88401192</span>
+                    </div>
+                    <div className={styles.grade}>
+                        <small>GEM MT</small>
+                        <b>10</b>
+                    </div>
+                </div>
+            )}
+            <div className={styles.slabWindow}>
+                {destaque ? (
+                    <CartaBrilhante valor={destaque.preco?.valor} inclinar={false}>
+                      <Image
+                          src={destaque.images.large}
+                          alt={`Carta ${destaque.name} · ${destaque.set} ${destaque.number}`}
+                          width={480}
+                          height={670}
+                          priority
+                          className={styles.cardImage}
+                      />
+                    </CartaBrilhante>
+                ) : (
+                    <div className={styles.card}>
+                        <div className={styles.cardTop}>
+                            <span>Carta exemplo</span>
+                            <span>HP 120</span>
+                        </div>
+                        <div className={styles.cardArt} />
+                        <div className={styles.cardLines}>
+                            <i />
+                            <i />
+                            <i />
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+
+        {destaque ? (
+            <div className={styles.priceTag}>
+                {destaque.preco ? (
+                    <>
+                        <span className={styles.priceTagLabel}>
+                            Preço hoje · {destaque.preco.fonte}
+                        </span>
+                        <strong>{formatarReais(destaque.preco.valor)}</strong>
+                        <Variacao valor={destaque.preco.variacao30} />
+                    </>
+                ) : (
+                    <>
+                        <span className={styles.priceTagLabel}>Preço hoje</span>
+                        <strong>Atualizando…</strong>
+                    </>
+                )}
+            </div>
+        ) : (
+            <div className={styles.priceTag}>
+                <span className={styles.priceTagLabel}>
+                    Preço hoje · exemplo
+                </span>
+                <strong>R$ 1.240</strong>
+                <span className={styles.up}>▲ 12% em 30 dias</span>
+            </div>
+        )}
+        </>
+    );
+}
+
+async function SlabDestaque() {
+    const [cartas] = await dadosDaHome();
+    return <ConteudoSlab destaque={cartas[0]} />;
+}
+
+// "Cartas que todo mundo procura"
+async function CartasEmDestaque() {
+    const [cartas, cotacao] = await dadosDaHome();
+    if (cartas.length === 0) return null;
+    return (
+        <section className={styles.section}>
+            <div className={styles.sectionInner}>
+                <h2 className={styles.sectionTitle}>Cartas que todo mundo procura</h2>
+                <p className={styles.sectionLead}>
+                    As cartas modernas e clássicas que mais valem hoje.
+                </p>
+                <CardCarousel
+                    styles={styles}
+                    cartas={cartas.map((c) => ({
+                        id: c.id,
+                        name: c.name,
+                        set: c.set,
+                        number: c.number,
+                        imagem: c.images.small,
+                    valor: c.preco?.valor ?? null,
+                        preco: c.preco ? formatarReais(c.preco.valor) : 'Ver preço',
+                    }))}
+                />
+                <p className={styles.sourceNote}>
+                    Preço de carta sem graduar em estado Near Mint, com dados da
+                    TCGplayer e da Cardmarket (via TCGdex).
+                    {cotacao.usd &&
+                        ` Convertido com o dólar a ${formatarReais(cotacao.usd)}.`}
+                </p>
+            </div>
+        </section>
+
+    );
+}
+
+// Esqueleto do carrossel enquanto as cartas carregam: mesmo tamanho dos cards de verdade,
+// pra página não pular quando eles chegam.
+function SkeletonCarrossel() {
+    return (
+        <section className={styles.section} aria-busy="true">
+            <div className={styles.sectionInner}>
+                <h2 className={styles.sectionTitle}>Cartas que todo mundo procura</h2>
+                <p className={styles.sectionLead}>As cartas modernas e clássicas que mais valem hoje.</p>
+                <p className={styles.srOnly} role="status">
+                    Carregando as cartas…
+                </p>
+                <div className={styles.carousel} aria-hidden="true">
+                    <div className={styles.carouselViewport}>
+                        <ul className={styles.carouselTrack}>
+                            {[1, 2, 3, 4, 5, 6].map((n) => (
+                                <li key={n} className={styles.carouselSlide}>
+                                    <div className={`${styles.cardTile} ${styles.skeletonTile}`}>
+                                        <span className={styles.skeletonFoto} />
+                                        <span className={styles.skeletonLinha} />
+                                        <span className={`${styles.skeletonLinha} ${styles.skeletonCurta}`} />
+                                        <span className={styles.skeletonPreco} />
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className={styles.carouselControls}>
+                        <span className={styles.skeletonBotao} />
+                        <span className={styles.skeletonBotao} />
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+export default function Home() {
 
     return (
         <div className={`${styles.page} ${styles.home} ${archivo.variable} ${plexMono.variable}`}>
@@ -162,120 +305,18 @@ export default async function Home() {
                         <TiltStage
                             className={styles.slabStage}
                             label="Exemplo de carta graduada com preço">
-                            <div className={styles.slab}>
-                                {destaque ? (
-                                    <div className={styles.slabLabel}>
-                                        <div className={styles.labelInfo}>
-                                            <span className={styles.labelSet}>
-                                                {destaque.set.toUpperCase()}
-                                            </span>
-                                            <strong>{destaque.name.toUpperCase()}</strong>
-                                            <span className={styles.cert}>#{destaque.number}</span>
-                                        </div>
-                                        {/* Sem nota: o preço é da carta sem graduar, em estado Near Mint */}
-                                        <div className={styles.grade}>
-                                            <small>COND.</small>
-                                            <b className={styles.gradeCond}>NM</b>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className={styles.slabLabel}>
-                                        <div className={styles.labelInfo}>
-                                            <span>2026 · CARTA EXEMPLO</span>
-                                            <strong>HOLO RARA #025</strong>
-                                            <span className={styles.cert}>CERT 88401192</span>
-                                        </div>
-                                        <div className={styles.grade}>
-                                            <small>GEM MT</small>
-                                            <b>10</b>
-                                        </div>
-                                    </div>
-                                )}
-                                <div className={styles.slabWindow}>
-                                    {destaque ? (
-                                        <Image
-                                            src={destaque.images.large}
-                                            alt={`Carta ${destaque.name} · ${destaque.set} ${destaque.number}`}
-                                            width={480}
-                                            height={670}
-                                            priority
-                                            className={styles.cardImage}
-                                        />
-                                    ) : (
-                                        <div className={styles.card}>
-                                            <div className={styles.cardTop}>
-                                                <span>Carta exemplo</span>
-                                                <span>HP 120</span>
-                                            </div>
-                                            <div className={styles.cardArt} />
-                                            <div className={styles.cardLines}>
-                                                <i />
-                                                <i />
-                                                <i />
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {destaque ? (
-                                <div className={styles.priceTag}>
-                                    {destaque.preco ? (
-                                        <>
-                                            <span className={styles.priceTagLabel}>
-                                                Preço hoje · {destaque.preco.fonte}
-                                            </span>
-                                            <strong>{formatarReais(destaque.preco.valor)}</strong>
-                                            <Variacao valor={destaque.preco.variacao30} />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className={styles.priceTagLabel}>Preço hoje</span>
-                                            <strong>Atualizando…</strong>
-                                        </>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className={styles.priceTag}>
-                                    <span className={styles.priceTagLabel}>
-                                        Preço hoje · exemplo
-                                    </span>
-                                    <strong>R$ 1.240</strong>
-                                    <span className={styles.up}>▲ 12% em 30 dias</span>
-                                </div>
-                            )}
+                            {/* Enquanto as cartas carregam, o slab mostra a carta de exemplo */}
+                            <Suspense fallback={<ConteudoSlab destaque={null} />}>
+                                <SlabDestaque />
+                            </Suspense>
                         </TiltStage>
                     </div>
                 </section>
 
                 {/* CARTAS EM ALTA (Pokémon TCG API) */}
-                {cartas.length > 0 && (
-                    <section className={styles.section}>
-                        <div className={styles.sectionInner}>
-                            <h2 className={styles.sectionTitle}>Cartas que todo mundo procura</h2>
-                            <p className={styles.sectionLead}>
-                                As cartas modernas e clássicas que mais valem hoje.
-                            </p>
-                            <CardCarousel
-                                styles={styles}
-                                cartas={cartas.map((c) => ({
-                                    id: c.id,
-                                    name: c.name,
-                                    set: c.set,
-                                    number: c.number,
-                                    imagem: c.images.small,
-                                    preco: c.preco ? formatarReais(c.preco.valor) : 'Ver preço',
-                                }))}
-                            />
-                            <p className={styles.sourceNote}>
-                                Preço de carta sem graduar em estado Near Mint, com dados da
-                                TCGplayer e da Cardmarket (via TCGdex).
-                                {cotacao.usd &&
-                                    ` Convertido com o dólar a ${formatarReais(cotacao.usd)}.`}
-                            </p>
-                        </div>
-                    </section>
-                )}
+                <Suspense fallback={<SkeletonCarrossel />}>
+                    <CartasEmDestaque />
+                </Suspense>
 
                 {/* COMO FUNCIONA */}
                 <section className={styles.section}>
@@ -299,7 +340,7 @@ export default async function Home() {
                 <section className={`${styles.section} ${styles.gradeSection}`}>
                     <div className={`${styles.sectionInner} ${styles.gradeGrid}`}>
                         <div className={styles.gradeText}>
-                            <p className={styles.eyebrowDark}>Simulador de graduação</p>
+                            <p className={styles.eyebrowDark}>Simulador de graduação · grátis</p>
                             <h2 className={styles.sectionTitle}>Vale a pena mandar pra PSA?</h2>
                             <p>
                                 Graduar custa caro e demora. O Slabbit faz a conta com taxa, frete
@@ -344,33 +385,8 @@ export default async function Home() {
                         <p className={styles.sectionLead}>
                             Você só paga se quiser as ferramentas de quem coleciona sério.
                         </p>
-                        <div className={styles.plans}>
-                            {planos.map((plano) => (
-                                <article
-                                    key={plano.nome}
-                                    data-reveal
-                                    className={`${styles.plan} ${plano.destaque ? styles.planPro : ''}`}>
-                                    <h3>{plano.nome}</h3>
-                                    <p className={styles.planPrice}>
-                                        <strong>{plano.preco}</strong> <span>{plano.nota}</span>
-                                    </p>
-                                    <ul>
-                                        {plano.itens.map((item) => (
-                                            <li key={item}>{item}</li>
-                                        ))}
-                                    </ul>
-                                    <Link
-                                        href="/entrar"
-                                        className={
-                                            plano.destaque
-                                                ? styles.buttonDark
-                                                : styles.buttonOutline
-                                        }>
-                                        {plano.cta}
-                                    </Link>
-                                </article>
-                            ))}
-                        </div>
+                        {/* Mesmos cartões da página /planos (com o seletor mensal/anual) */}
+                        <PricingPlans base={styles} />
                     </Reveal>
                 </section>
             </main>

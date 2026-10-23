@@ -167,15 +167,6 @@
   text-underline-offset: 3px;
 }
 
-/* O formulário de adicionar já vem aberto nessa página */
-.caixa details {
-  width: 100%;
-  padding-top: 0;
-}
-
-.caixa summary {
-  pointer-events: none;
-}
 
 /* Informações */
 .infos {
@@ -291,4 +282,250 @@
     width: min(100%, 340px);
     margin-inline: auto;
   }
+}
+
+/* Histórico + alerta de preço */
+.extraInner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px var(--gutter-r) 56px var(--gutter);
+  display: grid;
+  gap: 32px;
+}
+
+/* Alerta de preço: duas colunas (o que é | o que fazer), tudo alinhado à esquerda */
+.alerta {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 1fr);
+  gap: 28px 40px;
+  align-items: center;
+  padding: 28px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  text-align: left;
+  scroll-margin-top: 96px;
+}
+
+.alertaInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.alertaIcone {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: var(--border);
+  border-radius: 50%;
+  background: var(--slab-yellow);
+}
+
+.alertaSelo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.alertaSelo span {
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font-weight: 600;
+}
+
+.alertaTitulo {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-stretch: 120%;
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.alertaTexto {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--ink-soft);
+}
+
+.alertaAcao {
+  display: grid;
+  gap: 12px;
+}
+
+.alertaAcao > a {
+  text-align: center;
+}
+
+/* Cartãozinho de exemplo pra quem ainda não tem o Pro */
+.alertaExemplo {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 14px 16px;
+  border: 2px dashed var(--ink);
+  border-radius: 12px;
+  background: var(--slab-yellow);
+  transform: rotate(-1deg);
+}
+
+.alertaExemplo strong {
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+}
+
+.alertaExemplo span {
+  font-size: 0.92rem;
+}
+
+.alertaExemplo b {
+  font-family: var(--font-data);
+}
+
+.alertaExemplo .alertaExemploSelo {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-data);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+
+.alertaNota {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.alvoHoje {
+  margin: -4px 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 720px) {
+  .alerta {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px;
+  }
+}
+
+.alertaForm {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.alertaForm > a {
+  justify-self: center;
+}
+
+.direcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.direcoes legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.direcoes label {
+  position: relative;
+  cursor: pointer;
+}
+
+.direcoes input {
+  position: absolute;
+  opacity: 0;
+}
+
+.direcoes span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: var(--border);
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.direcoes input:checked + span {
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+.direcoes input:focus-visible + span {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.alvoRotulo {
+  font-weight: 700;
+}
+
+.alvo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: var(--border);
+  border-radius: 12px;
+  background: var(--acrylic);
+  font-family: var(--font-data);
+}
+
+.alvo input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.alertaForm button {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+
+/* Foto grande com efeito holográfico (components/CartaBrilhante):
+   a sombra vira drop-shadow pra acompanhar a carta inclinada */
+.fotoCarta {
+  --raio-carta: var(--radius);
+  filter: drop-shadow(8px 8px 0 var(--ink));
+}
+
+.fotoCarta .fotoImg {
+  box-shadow: none;
 }

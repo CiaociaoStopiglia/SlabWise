@@ -18,12 +18,6 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata = { title: "Entrar | Slabbit" };
 
-const vantagens = [
-  { titulo: "Sua coleção com preço", texto: "Veja quanto suas cartas valem hoje, somadas, em real." },
-  { titulo: "Simulações salvas", texto: "Guarde as contas do “Vale graduar?” e compare depois." },
-  { titulo: "Alertas de preço", texto: "Saiba quando uma carta que você quer baixar ou subir. (Pro)" },
-];
-
 export default async function Entrar({ searchParams }) {
   const { modo = "entrar", voltar = "/" } = await searchParams;
   if (await usuarioAtual()) redirect("/");
@@ -41,14 +35,6 @@ export default async function Entrar({ searchParams }) {
           <section className={styles.pitch}>
             <p className={base.eyebrow}>Conta Slabbit</p>
             <h1 className={styles.title}>{cadastro ? "Crie sua conta grátis" : "Bem-vindo de volta"}</h1>
-            <ul className={styles.perks}>
-              {vantagens.map((v) => (
-                <li key={v.titulo}>
-                  <strong>{v.titulo}</strong>
-                  <span>{v.texto}</span>
-                </li>
-              ))}
-            </ul>
           </section>
 
           {/* O card é um slab: etiqueta em cima (as abas), conteúdo embaixo */}

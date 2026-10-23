@@ -1,0 +1,256 @@
+/* Assinar o Pro. Cores, fontes e botões vêm do page.module.css. */
+
+.corpo {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 40px var(--gutter-r) 80px var(--gutter);
+  display: grid;
+  gap: 28px;
+}
+
+.topo {
+  display: grid;
+  gap: 12px;
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.grade {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.formulario {
+  flex: 999 1 520px;
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.caixa {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 24px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.passo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: var(--border);
+  border-radius: 6px;
+  background: var(--slab-yellow);
+  font-family: var(--font-data);
+  font-size: 0.9rem;
+}
+
+.opcoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* Cada opção é um <label> com rádio: clicar em qualquer lugar escolhe */
+.opcao {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 18px 18px 18px 50px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.opcao input {
+  position: absolute;
+  top: 20px;
+  left: 18px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.opcao:has(input:checked) {
+  background: var(--slab-yellow);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.opcaoNome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+}
+
+.selo {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.opcaoValor {
+  font-family: var(--font-data);
+  font-size: 1.5rem;
+}
+
+.opcaoNota {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.enviar {
+  justify-self: start;
+  min-width: 280px;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+/* Resumo do Pro: tudo alinhado à esquerda (o site centraliza o texto por padrão) */
+.resumo {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+  padding: 26px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--slab-yellow);
+  box-shadow: 8px 8px 0 var(--ink);
+  text-align: left;
+}
+
+.resumoSelo {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resumoTitulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 120%;
+  font-weight: 900;
+  font-size: 1.6rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.beneficios {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.beneficios li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.beneficioIcone {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--slab-yellow);
+}
+
+.beneficios li > span:last-child {
+  display: grid;
+  gap: 2px;
+  padding-top: 1px;
+}
+
+.beneficios strong {
+  font-family: var(--font-display);
+  font-stretch: 110%;
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.beneficios small {
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #3e3a2e;
+}
+
+/* Letras miúdas num cartão claro, separadas dos benefícios */
+.notas {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 16px;
+  border: var(--border);
+  border-radius: 12px;
+  background: var(--paper);
+  list-style: none;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.notas li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.notas svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.notas strong {
+  font-weight: 700;
+}

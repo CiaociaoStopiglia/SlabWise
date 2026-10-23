@@ -25,6 +25,10 @@
   --gutter: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
 
+  /* Coluna: topo, conteúdo e rodapé. O conteúdo estica e empurra o rodapé
+     pro fim da tela mesmo quando a página tem pouca coisa. */
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--acrylic);
   color: var(--ink);
@@ -32,6 +36,20 @@
   font-size: 1rem;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+}
+
+/* width + border-box: numa coluna flex, quem tem "margin: 0 auto" encolheria
+   pro tamanho do conteúdo; assim continua ocupando a largura toda (até o max-width). */
+.page > main {
+  flex: 1 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* A última seção não precisa da linha de baixo: o rodapé escuro já separa.
+   Sem isso, quando a página é curta, a linha fica solta no meio da tela. */
+.page > main > :last-child {
+  border-bottom: 0;
 }
 
 .page a {
@@ -165,6 +183,28 @@ button.navCta {
   letter-spacing: 0.06em;
 }
 
+/* Botão "Minha área" (logado): bolinha com as iniciais + texto */
+.navArea {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px 4px 4px;
+  white-space: nowrap;
+}
+
+.navAvatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--slab-yellow);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
 /* Página atual sublinhada no menu */
 .navLinks a[aria-current="page"] {
   text-decoration: underline;
@@ -255,14 +295,45 @@ button.navCta {
 
 .searchInput::placeholder {
   color: #8a877a;
+  transition: opacity 0.3s ease;
 }
 
-.searchInput:focus {
+/* Ao clicar pra digitar, o texto de exemplo esmaece devagar */
+.searchInput:focus::placeholder {
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .searchInput::placeholder {
+    transition: none;
+  }
+}
+
+/* X de limpar a busca (Chrome, Edge, Safari): bolinha preta com o X amarelo,
+   no lugar do X azul padrão do navegador */
+.searchInput::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  border-radius: 50%;
+  background: var(--ink)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd43b' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E")
+    center / 14px no-repeat;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.searchInput::-webkit-search-cancel-button:hover {
+  transform: scale(1.12);
+}
+
+/* Sem destaque de foco na caixa de busca: o cursor piscando já mostra onde digitar.
+   O seletor com .search ganha do ".page :focus-visible" geral. */
+.search .searchInput:focus,
+.search .searchInput:focus-visible {
   outline: none;
-}
-
-.search:focus-within {
-  box-shadow: 6px 6px 0 var(--ink), 0 0 0 3px var(--paper);
 }
 
 .searchButton {
@@ -898,10 +969,13 @@ button.navCta {
   position: relative;
 }
 
+/* O hover sobe o card (6px do Motion + 3px do CSS) e joga sombra de 6px.
+   A folga do padding dá espaço pra isso sem cortar; a margem negativa
+   compensa, então os cards continuam alinhados com o título. */
 .carouselViewport {
   overflow: hidden;
-  padding: 6px 6px 10px;
-  margin: -6px;
+  padding: 14px 12px 14px;
+  margin: -14px -12px;
 }
 
 .carouselTrack {
@@ -939,6 +1013,74 @@ button.navCta {
 .carouselControls button:hover {
   background: var(--ink);
   color: var(--slab-yellow);
+}
+
+/* ---------- ESQUELETO DO CARROSSEL (carregando) ---------- */
+.carouselSlide:has(.skeletonTile) {
+  animation: none;
+}
+
+.skeletonTile,
+.skeletonTile:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.skeletonFoto,
+.skeletonLinha,
+.skeletonPreco,
+.skeletonBotao {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e2e3dc 25%, #f1f2ec 50%, #e2e3dc 75%);
+  background-size: 200% 100%;
+  animation: brilhoSkeleton 1.4s ease-in-out infinite;
+}
+
+/* Mesma proporção da foto da carta (245 × 337) */
+.skeletonFoto {
+  aspect-ratio: 245 / 337;
+  margin-bottom: 8px;
+}
+
+.skeletonLinha {
+  height: 14px;
+  width: 85%;
+}
+
+.skeletonCurta {
+  width: 60%;
+}
+
+.skeletonPreco {
+  width: 90px;
+  height: 26px;
+  margin-top: auto;
+}
+
+.skeletonBotao {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+}
+
+@keyframes brilhoSkeleton {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* Quem pediu menos movimento no sistema vê o cinza parado */
+@media (prefers-reduced-motion: reduce) {
+  .skeletonFoto,
+  .skeletonLinha,
+  .skeletonPreco,
+  .skeletonBotao {
+    animation: none;
+  }
 }
 
 /* ---------- RESPONSIVO ---------- */
@@ -1109,4 +1251,63 @@ button.navCta {
 
 .page:not(.home) .carouselTrack {
   justify-content: center;
+}
+
+/* ---------- ANIMAÇÕES DE ENTRADA ----------
+   Nada aparece "seco": o conteúdo de cada página sobe e surge ao abrir,
+   listas entram em cascata e fotos aparecem com fade.
+   A home já tem a própria entrada (HeroEntrance), então fica de fora. */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* "backwards" (e não "both"): no fim não sobra transform no main,
+   que atrapalharia elementos fixos/grudados lá dentro */
+.page:not(.home) > main {
+  animation: surgir 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+
+/* Use em itens de lista com style={{ "--i": posição }}: cada um entra um pouco depois */
+.entra {
+  animation: surgir 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: calc(min(var(--i, 0), 12) * 45ms);
+}
+
+/* Carrossel da home: os cards chegam em cascata quando o esqueleto sai */
+.carouselSlide {
+  animation: surgir 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: calc(min(var(--i, 0), 8) * 60ms);
+}
+
+/* Foto da carta do slab do topo entra com fade quando substitui a de exemplo */
+.cardImage {
+  animation: aparecer 0.5s ease backwards;
+}
+
+/* Quem pediu menos movimento no sistema vê tudo aparecer direto */
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after,
+  .page > main {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

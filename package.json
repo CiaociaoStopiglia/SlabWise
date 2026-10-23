@@ -54,6 +54,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "2.5.5",
+        "@electric-sql/pglite": "^0.5.10",
         "@tailwindcss/postcss": "^4.3.3",
         "babel-plugin-react-compiler": "1.0.0",
         "tailwindcss": "^4.3.3"

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { query } from "../../lib/db";
 import { usuarioAtual } from "../../lib/auth";
+import { lerValor } from "../../lib/valores";
 import { ESTADOS, GRADUACOES } from "./opcoes";
 
 // Volta pra coleção com um aviso na URL (a página mostra e some no próximo clique).
@@ -23,19 +24,6 @@ async function exigirLogin() {
   const usuario = await usuarioAtual();
   if (!usuario) redirect("/entrar?voltar=/colecao");
   return usuario;
-}
-
-// "1.234,56" ou "1234.56" → 1234.56. Vazio ou inválido → null.
-function lerValor(texto) {
-  const limpo = String(texto ?? "")
-    .trim()
-    .replace(/[R$\s]/g, "");
-  if (!limpo) return null;
-  const normal = limpo.includes(",")
-    ? limpo.replace(/\./g, "").replace(",", ".")
-    : limpo;
-  const n = Number(normal);
-  return Number.isFinite(n) && n >= 0 && n < 10_000_000 ? n : null;
 }
 
 export async function adicionarCarta(formData) {

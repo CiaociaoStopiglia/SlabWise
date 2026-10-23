@@ -1,7 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { CHECKLIST, FRETE_PADRAO, NIVEIS_PSA, dataDeVolta, estimarChances, nivelAutomatico } from "./psa";
+import Link from "next/link";
+import { soDinheiro } from "../../lib/valores";
 import styles from "./graduar.module.css";
 
 const EXEMPLO = { cru: "310", psa10: "1450", psa9: "450", psa8: "300" };
@@ -32,6 +35,27 @@ function numero(texto) {
   return Number.isFinite(x) && x >= 0 ? x : null;
 }
 
+// Número que "corre" do valor antigo pro novo quando a pessoa muda um campo,
+// em vez de trocar de uma vez. Quem pediu menos movimento vê a troca direta.
+function ValorAnimado({ valor, formatar }) {
+  const reduzir = useReducedMotion();
+  const mv = useMotionValue(valor);
+  const texto = useTransform(mv, (v) => formatar(v));
+  useEffect(() => {
+    const controle = animate(mv, valor, { duration: reduzir ? 0 : 0.45, ease: "easeOut" });
+    return () => controle.stop();
+  }, [valor, mv, reduzir]);
+  return <motion.span>{texto}</motion.span>;
+}
+
+// Entrada e saída do painel de resultado: abre e fecha a altura com fade.
+const PAINEL = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: "auto" },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.35, ease: [0.2, 0.7, 0.2, 1] },
+};
+
 function CampoReais({ id, rotulo, ajuda, valor, onChange, placeholder }) {
   return (
     <div className={styles.field}>
@@ -44,7 +68,7 @@ function CampoReais({ id, rotulo, ajuda, valor, onChange, placeholder }) {
           inputMode="decimal"
           value={valor}
           placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange(soDinheiro(e.target.value))} /* só números, ponto e vírgula */
           autoComplete="off"
         />
       </div>
@@ -53,7 +77,12 @@ function CampoReais({ id, rotulo, ajuda, valor, onChange, placeholder }) {
   );
 }
 
-export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
+// quemSalva: "pro" (pode salvar), "gratis" (mostra que é do Pro) ou "visitante" (pede pra entrar).
+// acaoSalvar: Server Action que grava a simulação (vem da página).
+// Os campos começam sempre do zero: a página passa key={carta.id}, então trocar de carta
+// recria a calculadora; e todos os campos têm autoComplete="off" pra o navegador
+// (principalmente o Firefox) não "lembrar" o que estava marcado ao recarregar a página.
+export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte, quemSalva = "visitante", acaoSalvar }) {
   const usd = cotacaoUsd || 5.4;
   const exemplo = !carta;
 
@@ -152,7 +181,7 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
               ajuda={carta?.preco ? "Preço de hoje no Slabbit. Pode ajustar." : "Quanto você venderia ela hoje."}
               valor={valores.cru}
               onChange={mudarValor("cru")}
-              placeholder="0"
+              placeholder="Ex.: 310"
             />
             <CampoReais
               id="psa10"
@@ -160,14 +189,15 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
               ajuda="Veja vendas recentes no eBay ou na Liga."
               valor={valores.psa10}
               onChange={mudarValor("psa10")}
-              placeholder="0"
+              placeholder="Ex.: 1.450"
             />
             <CampoReais
               id="psa9"
               rotulo="Graduada PSA 9"
+              ajuda="É a nota mais comum. Também vale olhar as vendas recentes."
               valor={valores.psa9}
               onChange={mudarValor("psa9")}
-              placeholder="0"
+              placeholder="Ex.: 450"
             />
             <CampoReais
               id="psa8"
@@ -175,7 +205,7 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
               ajuda="Se deixar vazio, contamos como o valor sem graduar."
               valor={valores.psa8}
               onChange={mudarValor("psa8")}
-              placeholder="opcional"
+              placeholder="Opcional"
             />
           </div>
         </fieldset>
@@ -198,6 +228,8 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
                     <label key={op.id} className={estado[item.id] === op.id ? styles.segOn : undefined}>
                       <input
                         type="radio"
+                    autoComplete="off"
+                        autoComplete="off"
                         id={`${item.id}-${op.id}`}
                         name={item.id}
                         value={op.id}
@@ -221,7 +253,12 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
 
           <div className={styles.field}>
             <label htmlFor="nivel">Nível na PSA</label>
-            <select id="nivel" value={nivelEscolhido} onChange={(e) => setNivelEscolhido(e.target.value)}>
+            <select
+              id="nivel"
+              value={nivelEscolhido}
+              onChange={(e) => setNivelEscolhido(e.target.value)}
+              autoComplete="off"
+            >
               <option value="auto">Automático (pelo valor da carta)</option>
               {NIVEIS_PSA.map((n) => (
                 <option key={n.id} value={n.id}>
@@ -258,6 +295,7 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
                 <label key={id} className={envio === id ? styles.segOn : undefined}>
                   <input
                     type="radio"
+                    autoComplete="off"
                     id={`envio-${id}`}
                     name="envio"
                     value={id}
@@ -291,23 +329,37 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
 
       {/* RESULTADO */}
       <aside className={styles.result} aria-live="polite">
+        <AnimatePresence mode="wait" initial={false}>
         {!r ? (
-          <div className={styles.resultEmpty}>
+          <motion.div key="vazio" className={styles.resultEmpty} {...PAINEL}>
             <p className={styles.resultKicker}>Resultado</p>
             <h2>Preencha os valores</h2>
             <p>Coloque quanto a carta vale sem graduar, em PSA 10 e em PSA 9 pra ver se compensa.</p>
-          </div>
+          </motion.div>
         ) : (
-          <>
+          <motion.div key="resultado" {...PAINEL}>
             <div className={`${styles.verdict} ${VEREDITOS[r.veredito].classe}`}>
               <span className={styles.resultKicker}>Veredito{exemplo && !editou ? " · exemplo" : ""}</span>
-              <strong>{VEREDITOS[r.veredito].titulo}</strong>
+              {/* O veredito troca com um deslize curto quando muda */}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.strong
+                  key={r.veredito}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {VEREDITOS[r.veredito].titulo}
+                </motion.strong>
+              </AnimatePresence>
             </div>
 
             <div className={styles.resultBody}>
               <div className={styles.bigNumber}>
                 <span>Lucro esperado vs. vender sem graduar</span>
-                <strong className={r.esperado >= 0 ? styles.pos : styles.neg}>{comSinal(r.esperado)}</strong>
+                <strong className={r.esperado >= 0 ? styles.pos : styles.neg}>
+                  <ValorAnimado valor={r.esperado} formatar={comSinal} />
+                </strong>
               </div>
               <p className={styles.sentence}>
                 {r.minima
@@ -349,7 +401,9 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
                         <span className={styles.bar} style={{ "--w": pct(c.chance) }} aria-hidden="true" />
                         {pct(c.chance)}
                       </td>
-                      <td className={c.lucro >= 0 ? styles.pos : styles.neg}>{comSinal(c.lucro)}</td>
+                      <td className={c.lucro >= 0 ? styles.pos : styles.neg}>
+                        <ValorAnimado valor={c.lucro} formatar={comSinal} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -373,7 +427,9 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
                 </div>
                 <div className={styles.costsTotal}>
                   <dt>Custo total</dt>
-                  <dd>{reais(r.custo)}</dd>
+                  <dd>
+                    <ValorAnimado valor={r.custo} formatar={reais} />
+                  </dd>
                 </div>
               </dl>
 
@@ -390,9 +446,48 @@ export default function Calculadora({ carta, cotacaoUsd, cotacaoFonte }) {
                 {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(usd)}
                 {cotacaoFonte === "reserva" ? " (cotação de reserva)" : ""}. Preços da PSA de referência 2026.
               </p>
+
+              {/* Salvar a simulação: simular é grátis, guardar pra comparar depois é do Pro */}
+              <div className={styles.salvar}>
+                {quemSalva === "pro" && acaoSalvar ? (
+                  <form action={acaoSalvar}>
+                    <input type="hidden" name="carta_id" value={carta?.id ?? ""} />
+                    <input type="hidden" name="veredito" value={r.veredito} />
+                    <input
+                      type="hidden"
+                      name="dados"
+                      value={JSON.stringify({
+                        cartaNome: carta?.nome ?? null,
+                        valores,
+                        estado,
+                        envio,
+                        frete: frete[envio],
+                        imposto,
+                        nivel: r.nivel.id,
+                        custo: Math.round(r.custo),
+                        esperado: Math.round(r.esperado),
+                        chance10: r.cenarios[0].chance,
+                      })}
+                    />
+                    <button type="submit" className={styles.salvarBotao}>
+                      Salvar simulação
+                    </button>
+                  </form>
+                ) : quemSalva === "gratis" ? (
+                  <p>
+                    Quer guardar pra comparar depois? <Link href="/assinar">Salvar simulações é do Pro</Link>.
+                  </p>
+                ) : (
+                  <p>
+                    <Link href="/entrar?voltar=/graduar">Entre na sua conta</Link> pra salvar simulações (recurso do
+                    Pro).
+                  </p>
+                )}
+              </div>
             </div>
-          </>
+          </motion.div>
         )}
+        </AnimatePresence>
       </aside>
     </div>
   );
