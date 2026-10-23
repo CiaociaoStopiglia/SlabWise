@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { Bell, Calculator, CreditCard, LayoutGrid, UserRound } from "lucide-react";
 import Cabecalho, { iniciais } from "../Cabecalho";
+import { fotoPokemon } from "../../lib/pokeapi";
 import base from "../../app/page.module.css";
 import styles from "./area.module.css";
 
@@ -41,7 +42,11 @@ export default function AreaLogada({ usuario, ativo, titulo, acoes, children }) 
         <aside className={styles.lateral} aria-label="Minha área">
           <div className={styles.perfil}>
             <span className={styles.avatar} aria-hidden="true">
-              {iniciais(usuario.nome)}
+              {usuario.pokemon_favorito ? (
+                <img src={fotoPokemon(usuario.pokemon_favorito)} alt="" width={46} height={46} />
+              ) : (
+                iniciais(usuario.nome)
+              )}
             </span>
             <div>
               <strong>{usuario.nome}</strong>

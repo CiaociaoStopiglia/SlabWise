@@ -47,6 +47,11 @@ async function criarBancoLocal() {
     console.info("[slabbit] banco local criado na pasta .banco-local");
   }
 
+  // Bancos locais criados antes do Pokémon favorito ganham a coluna (mesma coisa da migração 002).
+  await banco.exec(
+    "alter table usuarios add column if not exists pokemon_favorito smallint check (pokemon_favorito between 1 and 1025)",
+  );
+
   // Mesmo formato de resposta do "pg" ({ rows, rowCount }), pro resto do site nem perceber a diferença.
   return {
     async query(texto, valores) {

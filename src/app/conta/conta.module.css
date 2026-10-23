@@ -1,0 +1,54 @@
+/* Pokémon favorito da página Conta. Cores vêm do page.module.css. */
+
+.escolhido {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 96px;
+}
+
+.escolhido > div {
+  display: grid;
+  gap: 4px;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  max-height: 420px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.pokemon {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 8px 4px;
+  border: var(--border);
+  border-radius: 12px;
+  background: var(--acrylic);
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.pokemon:hover {
+  background: var(--paper);
+}
+
+.pokemon[aria-pressed="true"] {
+  background: var(--slab-yellow);
+  font-weight: 700;
+}
+
+.pokemon img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}

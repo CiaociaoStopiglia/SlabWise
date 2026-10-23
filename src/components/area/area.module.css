@@ -64,6 +64,14 @@
   background: var(--ink);
   color: var(--slab-yellow);
   font-weight: 800;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--slab-yellow);
 }
 
 .selo,

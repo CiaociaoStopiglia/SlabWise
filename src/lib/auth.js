@@ -59,7 +59,7 @@ export const usuarioAtual = cache(async () => {
   if (!token) return null;
   try {
     const { rows } = await query(
-      `select u.id, u.nome, u.email, u.plano
+      `select u.id, u.nome, u.email, u.plano, u.pokemon_favorito
          from sessoes s
          join usuarios u on u.id = s.usuario_id
         where s.token_hash = $1 and s.expira_em > now()`,

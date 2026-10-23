@@ -3,7 +3,9 @@
 import { redirect } from "next/navigation";
 import { usuarioAtual } from "../../lib/auth";
 import AreaLogada from "../../components/area/AreaLogada";
-import { alterarSenha, atualizarNome, excluirConta, gerarHistoricoDev, mudarPlanoDev } from "./actions";
+import { alterarSenha, atualizarNome, excluirConta, gerarHistoricoDev, mudarPlanoDev, salvarPokemonFavorito } from "./actions";
+import PokemonFavorito from "./PokemonFavorito";
+import { listarPokemons } from "../../lib/pokeapi";
 import base from "../page.module.css";
 import styles from "../../components/area/area.module.css";
 
@@ -12,6 +14,8 @@ export const metadata = { title: "Conta | Slabbit" };
 export default async function Conta({ searchParams }) {
   const usuario = await usuarioAtual();
   if (!usuario) redirect("/entrar?voltar=/conta");
+
+  const pokemons = await listarPokemons();
 
   return (
     <AreaLogada usuario={usuario} ativo="conta" titulo="Conta">
@@ -36,6 +40,15 @@ export default async function Conta({ searchParams }) {
           </button>
         </div>
       </form>
+
+      {pokemons ? (
+        <PokemonFavorito pokemons={pokemons} atual={usuario.pokemon_favorito} acao={salvarPokemonFavorito} />
+      ) : (
+        <div className={styles.caixa}>
+          <h2 className={styles.subtitulo}>Pokémon favorito</h2>
+          <p className={styles.texto}>Não conseguimos carregar a lista de Pokémon agora. Tente de novo daqui a pouco.</p>
+        </div>
+      )}
 
       <form action={alterarSenha} className={styles.caixa}>
         <h2 className={styles.subtitulo}>Senha</h2>

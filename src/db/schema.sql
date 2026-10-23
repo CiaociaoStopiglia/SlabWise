@@ -19,6 +19,7 @@ create table usuarios (
   plano         text   not null default 'gratis' check (plano in ('gratis', 'pro')),
   pro_ate       timestamptz,                       -- até quando o Pro tá pago
   email_confirmado boolean not null default false,
+  pokemon_favorito smallint check (pokemon_favorito between 1 and 1025), -- número na Pokédex (PokeAPI)
   criado_em     timestamptz not null default now(),
   atualizado_em timestamptz not null default now(),
   constraint email_valido check (email ~ '^[^@\s]+@[^@\s]+\.[^@\s]+$')

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { query } from "../../lib/db";
 import { encerrarSessao, hashSenha, usuarioAtual, verificarSenha } from "../../lib/auth";
+import { TOTAL_POKEMONS } from "../../lib/pokeapi";
 
 function voltar(aviso, tipo = "ok") {
   redirect(`/conta?${tipo}=${encodeURIComponent(aviso)}`);
@@ -119,4 +120,22 @@ export async function gerarHistoricoDev() {
   );
   revalidatePath("/", "layout");
   voltar("Histórico de teste criado: veja na coleção e na página das suas cartas.");
+}
+
+export async function salvarPokemonFavorito(formData) {
+  const usuario = await exigirLogin();
+  const texto = String(formData.get("pokemon") ?? "");
+  // Vazio = tirar o favorito
+  const id = texto === "" ? null : Number(texto);
+  if (id !== null && !(Number.isInteger(id) && id >= 1 && id <= TOTAL_POKEMONS)) {
+    voltar("Escolha um Pokémon da lista.", "erro");
+  }
+  try {
+    await query("update usuarios set pokemon_favorito = $2 where id = $1", [usuario.id, id]);
+  } catch (erro) {
+    console.error("[slabbit] erro ao salvar o Pokémon favorito:", erro.message);
+    voltar("Não conseguimos salvar agora. Tente de novo.", "erro");
+  }
+  revalidatePath("/", "layout");
+  voltar(id ? "Pokémon favorito salvo." : "Pokémon favorito removido.");
 }
